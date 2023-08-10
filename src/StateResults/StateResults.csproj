@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="AssemblyInfo">
+        <Name>StateResults</Name>
+        <Product>$(Name)</Product>
+        <Title>$(Company).$(Product)</Title>
+        <Description>
+            Contains union-types representing either a successful result or a list of possible errors
+        </Description>
+        <RootNamespace>$(Company).$(Product)</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Package">
+        <PackageId>$(Company).$(Product)</PackageId>
+        <PackageDescription>$(Description)</PackageDescription>
+        <PackageTags>unions types results oneof states</PackageTags>
+        <RepositoryUrl>https://github.com/$(Company)/$(Product)</RepositoryUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="OneOf"/>
+        <PackageReference Include="Ardalis.GuardClauses" Condition="'$(TargetFramework)'!='net8.0'"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Results.g.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Results.g.cs</LastGenOutput>
+        </None>
+        <None Update="States\StateMarkers.g.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>StateMarkers.g.cs</LastGenOutput>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="States\StateMarkers.csv">
+            <DependentUpon>StateMarkers.g.tt</DependentUpon>
+        </None>
+        <Compile Update="States\StateMarkers.g.cs">
+            <DependentUpon>StateMarkers.g.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Results.g.cs">
+            <DependentUpon>Results.g.tt</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+</Project>

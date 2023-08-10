@@ -1,0 +1,12 @@
+NAME,TYPE
+
+Success,success
+Deprecated,error
+InternalError,error
+NotFound,error
+AlreadyExists,error
+NotExist,error
+NotAdded,error
+NotUpdated,error
+CannotBeDeleted,error
+Prohibited,error

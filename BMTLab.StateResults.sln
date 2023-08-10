@@ -1,0 +1,74 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{A3892F39-8203-418C-AE3D-5C979E996030}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9DB247F8-42AF-4F26-ABD4-C0C549835C7C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{2902D3CB-5B33-4189-9AF9-D905D78FF11D}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.config\dotnet-tools.json = .config\dotnet-tools.json
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{820D1787-2357-4A04-9D2B-C8A243358D07}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_props", "_props", "{83470426-D91F-4A67-9DE6-82AAB13AEA1B}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{7EB63F32-4339-49F1-A040-922693825FB0}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\clean.sh = scripts\clean.sh
+		scripts\clean.ps1 = scripts\clean.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{9A2C20AD-F908-46D6-A34D-6481D7A6791E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateResults", "src\StateResults\StateResults.csproj", "{5CBBDEB0-9BF4-462C-AFC7-A84118D7BDB0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_props", "_props", "{1FEB6318-1791-4CED-9220-0BB6F02A4356}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Directory.Build.props = tests\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateResults.Tests.Unit", "tests\UnitTests\StateResults.Tests.Unit\StateResults.Tests.Unit.csproj", "{6D5A361B-2984-4350-AE0B-73653293D58F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{601AEC50-B7EB-4E14-B456-5EC8CE63B73B}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		LICENSE.md = LICENSE.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5CBBDEB0-9BF4-462C-AFC7-A84118D7BDB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CBBDEB0-9BF4-462C-AFC7-A84118D7BDB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CBBDEB0-9BF4-462C-AFC7-A84118D7BDB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CBBDEB0-9BF4-462C-AFC7-A84118D7BDB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D5A361B-2984-4350-AE0B-73653293D58F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D5A361B-2984-4350-AE0B-73653293D58F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D5A361B-2984-4350-AE0B-73653293D58F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D5A361B-2984-4350-AE0B-73653293D58F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{83470426-D91F-4A67-9DE6-82AAB13AEA1B} = {820D1787-2357-4A04-9D2B-C8A243358D07}
+		{9A2C20AD-F908-46D6-A34D-6481D7A6791E} = {9DB247F8-42AF-4F26-ABD4-C0C549835C7C}
+		{5CBBDEB0-9BF4-462C-AFC7-A84118D7BDB0} = {820D1787-2357-4A04-9D2B-C8A243358D07}
+		{1FEB6318-1791-4CED-9220-0BB6F02A4356} = {9DB247F8-42AF-4F26-ABD4-C0C549835C7C}
+		{6D5A361B-2984-4350-AE0B-73653293D58F} = {9A2C20AD-F908-46D6-A34D-6481D7A6791E}
+	EndGlobalSection
+EndGlobal

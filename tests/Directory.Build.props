@@ -1,0 +1,16 @@
+<Project>
+
+    <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))"/>
+
+    <PropertyGroup Label="Framework">
+        <IsTestProject>true</IsTestProject>
+        <IsPublishable>false</IsPublishable>
+        <IsPackable>false</IsPackable>
+
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+        <NoWarn>$(NoWarn);CA1707</NoWarn><!--Remove underscore in method name-->
+        <NoWarn>$(NoWarn);CA1848</NoWarn><!--Use the LoggerMessage delegates-->
+    </PropertyGroup>
+
+</Project>

@@ -1,0 +1,115 @@
+<Project>
+
+    <PropertyGroup>
+        <CurrentDate>$([System.DateTime]::UtcNow.ToString(MMdd))</CurrentDate>
+        <CurrentTime>$([System.DateTime]::UtcNow.ToString(hhmm))</CurrentTime>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Version">
+        <Major>1</Major>
+        <Minor>0</Minor>
+        <Build>$(CurrentDate)</Build>
+        <Revision>$(CurrentTime)</Revision>
+        <PreReleaseLabel>beta</PreReleaseLabel>
+    </PropertyGroup>
+
+    <PropertyGroup Label="AssemblyInfo">
+        <VersionPrefix>$(Major).$(Minor).$(Build).$(Revision)</VersionPrefix>
+        <VersionSuffix>$(PreReleaseLabel)</VersionSuffix>
+
+        <Company>BMTLab</Company>
+        <Authors>$(Company),Nikita Neverov</Authors>
+        <Copyright>Copyright © $([System.DateTime]::Now.Date.Year)</Copyright>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Package">
+        <PackageVersion>$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Framework">
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+
+        <Platforms>AnyCPU</Platforms>
+
+        <NoWarn>$(NoWarn);S2094</NoWarn><!--Remove empty record-->
+        <NoWarn>$(NoWarn);CA1040</NoWarn><!--Avoid empty interfaces-->
+        <NoWarn>$(NoWarn);CA1308</NoWarn><!--Normalize strings to uppercase-->
+        <NoWarn>$(NoWarn);CA1034</NoWarn><!--Nested types should not be visible-->
+        <NoWarn>$(NoWarn);S3604</NoWarn><!--Remove the member initializer, all constructors set an initial value for the member-->
+        <NoWarn>$(NoWarn);NETSDK1057</NoWarn><!--You are using a preview version-->
+
+        <Configurations>Debug;Release</Configurations>
+        <PackageReleaseNotes Condition="'$(Configuration)'=='Debug'">Debug</PackageReleaseNotes>
+        <PackageReleaseNotes Condition="'$(Configuration)'=='Release'">Release</PackageReleaseNotes>
+
+        <SelfContained>false</SelfContained>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <ArtifactsPath>$(MSBuildThisFileDirectory)out</ArtifactsPath>
+        <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+        <!-- https://github.com/dotnet/msbuild/blob/main/documentation/ProjectReference-Protocol.md#setplatform-negotiation -->
+        <EnableDynamicPlatformResolution>true</EnableDynamicPlatformResolution>
+
+        <!-- Opt in till https://github.com/NuGet/Home/issues/9803 makes this the default. -->
+        <!-- Opt back out until an SDK with the fix for https://github.com/NuGet/Home/issues/12177 is generally available. -->
+        <RestoreUseStaticGraphEvaluation>false</RestoreUseStaticGraphEvaluation>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+        <ErrorReport>send</ErrorReport>
+        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <ErrorReport>none</ErrorReport>
+        <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+
+    <ItemGroup Label="Annotations">
+        <PackageReference Include="JetBrains.Annotations"/>
+    </ItemGroup>
+
+    <ItemGroup Label="Analyzers">
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" PrivateAssets="All"/>
+        <PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="All"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="JetBrains.Annotations"/>
+        <Using Include="System.Diagnostics"/>
+        <Using Include="System.Diagnostics.CodeAnalysis"/>
+    </ItemGroup>
+
+    <ItemGroup Label="Docs">
+        <None Include="$(MSBuildThisFileDirectory)LICENSE.md" Pack="true" PackagePath=""/>
+        <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath=""/>
+    </ItemGroup>
+
+    <ItemGroup Label="EditorConfig">
+        <EditorConfigFiles Update=".editorconfig">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EditorConfigFiles>
+    </ItemGroup>
+
+</Project>
