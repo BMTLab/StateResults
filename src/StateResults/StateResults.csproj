@@ -21,7 +21,6 @@
 
     <ItemGroup>
         <PackageReference Include="OneOf"/>
-        <PackageReference Include="Ardalis.GuardClauses" Condition="'$(TargetFramework)'!='net8.0'"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -39,11 +38,11 @@
         <None Update="States\StateMarkers.csv">
             <DependentUpon>StateMarkers.g.tt</DependentUpon>
         </None>
-        <Compile Update="States\StateMarkers.g.cs">
-            <DependentUpon>StateMarkers.g.tt</DependentUpon>
-        </Compile>
         <Compile Update="Results.g.cs">
             <DependentUpon>Results.g.tt</DependentUpon>
+        </Compile>
+        <Compile Update="States\StateMarkers.g.cs">
+            <DependentUpon>StateMarkers.g.tt</DependentUpon>
         </Compile>
     </ItemGroup>
 

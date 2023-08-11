@@ -15,11 +15,6 @@
 */
 #nullable enable
 
-// Use GuardClauses for null or white space check
-#if !NET8_0_OR_GREATER
-using Ardalis.GuardClauses;
-#endif
-
 using BMTLab.StateResults.Abstractions;
 
 namespace BMTLab.StateResults;
@@ -75,11 +70,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public <#= name #>(string message) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
         }
@@ -106,11 +97,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public <#= name #>(string message, Exception? exception = default) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
             Exception = exception;

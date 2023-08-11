@@ -1,3 +1,3 @@
 global using BMTLab.StateResults.Abstractions;
 
-global using static System.ArgumentNullException;
+global using static BMTLab.StateResults.Utils.ThrowHelper;

@@ -4,13 +4,8 @@
 #nullable enable
 
 // Use GuardClauses for null or white space check
-#if !NET8_0_OR_GREATER
-using Ardalis.GuardClauses;
-#endif
 
-using BMTLab.StateResults.Abstractions;
-
-namespace BMTLab.StateResults;
+namespace BMTLab.StateResults.States;
 
 /// <summary>
 ///     Contains a set of common states representing the result of an operation.
@@ -29,11 +24,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public Success(string message) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
         }
@@ -53,11 +44,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public Deprecated(string message, Exception? exception = default) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
             Exception = exception;
@@ -81,11 +68,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public InternalError(string message, Exception? exception = default) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
             Exception = exception;
@@ -109,11 +92,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public NotFound(string message, Exception? exception = default) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
             Exception = exception;
@@ -137,11 +116,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public AlreadyExists(string message, Exception? exception = default) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
             Exception = exception;
@@ -165,11 +140,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public NotExist(string message, Exception? exception = default) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
             Exception = exception;
@@ -193,11 +164,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public NotAdded(string message, Exception? exception = default) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
             Exception = exception;
@@ -221,11 +188,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public NotUpdated(string message, Exception? exception = default) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
             Exception = exception;
@@ -249,11 +212,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public CannotBeDeleted(string message, Exception? exception = default) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
             Exception = exception;
@@ -277,11 +236,7 @@ public static class StateMarkers
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public Prohibited(string message, Exception? exception = default) : this()
         {
-            #if NET8_0_OR_GREATER
-            ArgumentException.ThrowIfNullOrWhiteSpace(message);
-            #else
-            Guard.Against.NullOrWhiteSpace(message, nameof(message));
-            #endif
+            ThrowIfNullOrWhiteSpace(message);
 
             Message = message;
             Exception = exception;
