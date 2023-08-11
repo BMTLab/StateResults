@@ -9,7 +9,7 @@
 
 using OneOf;
 
-namespace Application.Models.StateResults;
+namespace BMTLab.StateResults;
 
 <#
     // Control the maximum number of types of errors

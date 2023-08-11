@@ -22,10 +22,10 @@ using Ardalis.GuardClauses;
 
 using BMTLab.StateResults.Abstractions;
 
-namespace Application.Models.StateResults.States;
+namespace BMTLab.StateResults;
 
 /// <summary>
-///     Contains a set of common states representing the result of an operation2.
+///     Contains a set of common states representing the result of an operation.
 /// </summary>
 [PublicAPI]
 [DebuggerStepThrough]

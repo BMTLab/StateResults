@@ -5,7 +5,7 @@
 
 using OneOf;
 
-namespace Application.Models.StateResults;
+namespace BMTLab.StateResults;
 
 /// <summary>
 ///     Aggregates the result of some operation into itself. The result may be successful or not.
