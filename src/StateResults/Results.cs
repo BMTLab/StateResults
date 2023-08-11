@@ -11,11 +11,10 @@ namespace BMTLab.StateResults;
 [ExcludeFromCodeCoverage]
 public readonly record struct Results<TSuccess, TError> : IHasSuccessResult, IHasErrorResult
 {
-    private readonly TError? _errorValue;
-
     // Align the size of the structure
     private readonly short _index = 0;
 
+    private readonly TError? _errorValue;
     private readonly TSuccess? _successValue;
 
 
@@ -48,11 +47,10 @@ public readonly record struct Results<TSuccess, TError> : IHasSuccessResult, IHa
 
 
     /// <inheritdoc />
-    public bool IsError => !IsSuccess;
-
+    public bool IsSuccess => _index == 0;
 
     /// <inheritdoc />
-    public bool IsSuccess => _index == 0;
+    public bool IsError => !IsSuccess;
 
 
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>

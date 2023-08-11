@@ -1,54 +1,57 @@
+using System.ComponentModel;
+
 namespace BMTLab.StateResults;
 
 /// <summary>
 ///     Aggregates the result of some operation into itself.
 /// </summary>
-/// <typeparam name="TSuccess">Type of successful result.</typeparam>
+/// <typeparam name="T">Type of result (successful or not).</typeparam>
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct Result<TSuccess> : IHasSuccessResult, IHasErrorResult
+public readonly record struct Result<T> : IHasSuccessResult, IHasErrorResult
 {
-    private readonly TSuccess _successValue;
+    private readonly T _value;
 
 
     /// <summary>
-    ///     Initializes the result object with a successful state.
+    ///     Initializes the result object with a certain state.
     /// </summary>
     /// <param name="value">Arbitrary result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Result(TSuccess value)
+    public Result(T value)
     {
         ThrowIfNull(value);
 
-        _successValue = value;
+        _value = value;
     }
 
 
     /// <inheritdoc />
-    public bool IsError => false;
+    [DefaultValue(true)]
+    public bool IsSuccess { get; init; } = true;
 
 
     /// <inheritdoc />
-    public bool IsSuccess => true;
+    public bool IsError => !IsSuccess;
 
 
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
     [Pure]
-    public static implicit operator Result<TSuccess>(TSuccess value)
+    public static implicit operator Result<T>(T value)
     {
         ThrowIfNull(value);
 
-        return new Result<TSuccess>(value);
+        return new Result<T>(value);
     }
 
 
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
     [Pure]
-    public static implicit operator TSuccess(Result<TSuccess> value)
+    public static implicit operator T(Result<T> value)
     {
         ThrowIfNull(value);
 
-        return value._successValue;
+        return value._value;
     }
 }
