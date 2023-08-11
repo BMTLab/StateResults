@@ -17,7 +17,7 @@
 
 using BMTLab.StateResults.Abstractions;
 
-namespace BMTLab.StateResults;
+namespace BMTLab.StateResults.States;
 
 /// <summary>
 ///     Contains a set of common states representing the result of an operation.
@@ -25,7 +25,7 @@ namespace BMTLab.StateResults;
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public static class StateMarkers
+public static partial class StateMarkers
 {
 <#
     // Process each line in the CSV file

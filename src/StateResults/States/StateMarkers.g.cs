@@ -3,7 +3,7 @@
 */
 #nullable enable
 
-// Use GuardClauses for null or white space check
+using BMTLab.StateResults.Abstractions;
 
 namespace BMTLab.StateResults.States;
 
@@ -13,7 +13,7 @@ namespace BMTLab.StateResults.States;
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public static class StateMarkers
+public static partial class StateMarkers
 {
     ///<inheritdoc cref="ISuccessStateMarker" />
     [PublicAPI]
