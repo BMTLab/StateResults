@@ -16,14 +16,14 @@
     <PropertyGroup Label="AssemblyInfo">
         <VersionPrefix>$(Major).$(Minor).$(Build).$(Revision)</VersionPrefix>
         <VersionSuffix>$(PreReleaseLabel)</VersionSuffix>
-
-        <Company>BMTLab</Company>
-        <Authors>$(Company),Nikita Neverov</Authors>
-        <Copyright>Copyright © $([System.DateTime]::Now.Date.Year)</Copyright>
-        <RepositoryType>git</RepositoryType>
+        <Deterministic>true</Deterministic>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
+        <Company>BMTLab</Company>
+        <Authors>Nikita Neverov</Authors>
+        <Copyright>Copyright © $([System.DateTime]::Now.Date.Year)</Copyright>
+        <RepositoryType>git</RepositoryType>
         <PackageVersion>$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
@@ -59,30 +59,28 @@
     </PropertyGroup>
 
     <PropertyGroup>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
         <ArtifactsPath>$(MSBuildThisFileDirectory)out</ArtifactsPath>
         <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
-        <!-- https://github.com/dotnet/msbuild/blob/main/documentation/ProjectReference-Protocol.md#setplatform-negotiation -->
-        <EnableDynamicPlatformResolution>true</EnableDynamicPlatformResolution>
 
-        <!-- Opt in till https://github.com/NuGet/Home/issues/9803 makes this the default. -->
-        <!-- Opt back out until an SDK with the fix for https://github.com/NuGet/Home/issues/12177 is generally available. -->
-        <RestoreUseStaticGraphEvaluation>false</RestoreUseStaticGraphEvaluation>
+        <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+        <!-- Embed source files that are not tracked by the source control manager in the PDB -->
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-        <ErrorReport>send</ErrorReport>
         <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>full</DebugType>
         <Optimize>false</Optimize>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Release'">
-        <ErrorReport>none</ErrorReport>
         <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-        <DebugSymbols>false</DebugSymbols>
-        <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
+
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
 
     <ItemGroup Label="Annotations">
@@ -104,6 +102,14 @@
     <ItemGroup Label="Docs">
         <None Include="$(MSBuildThisFileDirectory)LICENSE.md" Pack="true" PackagePath=""/>
         <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath=""/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <SourceRoot Include="$(MSBuildThisFileDirectory)/"/>
+        <PackageReference Include="Microsoft.SourceLink.GitHub">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup Label="EditorConfig">

@@ -8,6 +8,7 @@
             Contains union-types representing either a successful result or a list of possible errors
         </Description>
         <RootNamespace>$(Company).$(Product)</RootNamespace>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
@@ -15,6 +16,7 @@
         <PackageDescription>$(Description)</PackageDescription>
         <PackageTags>unions types results oneof states</PackageTags>
         <RepositoryUrl>https://github.com/$(Company)/$(Product)</RepositoryUrl>
+        <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
