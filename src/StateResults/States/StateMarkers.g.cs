@@ -1,5 +1,6 @@
-﻿/*
-    This file was generated automatically, do not make changes to it manually!
+/*
+    NOTE: Auto-generated file.
+    Don't make manual changes here.
 */
 #nullable enable
 
@@ -60,6 +61,54 @@ public static partial class StateMarkers
 
     ///<inheritdoc cref="IErrorStateMarker" />
     [PublicAPI]
+    public readonly record struct NotImplemented : IErrorStateMarker
+    {
+        /// <param name="message"><see cref="Message"/>.</param>
+        /// <param name="exception"><see cref="Exception"/>.</param>
+        /// <exception cref="ArgumentNullException">if the <paramref name="message"/> string is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
+        public NotImplemented(string message, Exception? exception = default) : this()
+        {
+            ThrowIfNullOrWhiteSpace(message);
+
+            Message = message;
+            Exception = exception;
+        }
+
+        /// <inheritdoc />
+        public string? Message { get; init; }
+
+        /// <inheritdoc />
+        public Exception? Exception { get; init; }
+    }
+
+
+    ///<inheritdoc cref="IErrorStateMarker" />
+    [PublicAPI]
+    public readonly record struct Canceled : IErrorStateMarker
+    {
+        /// <param name="message"><see cref="Message"/>.</param>
+        /// <param name="exception"><see cref="Exception"/>.</param>
+        /// <exception cref="ArgumentNullException">if the <paramref name="message"/> string is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
+        public Canceled(string message, Exception? exception = default) : this()
+        {
+            ThrowIfNullOrWhiteSpace(message);
+
+            Message = message;
+            Exception = exception;
+        }
+
+        /// <inheritdoc />
+        public string? Message { get; init; }
+
+        /// <inheritdoc />
+        public Exception? Exception { get; init; }
+    }
+
+
+    ///<inheritdoc cref="IErrorStateMarker" />
+    [PublicAPI]
     public readonly record struct InternalError : IErrorStateMarker
     {
         /// <param name="message"><see cref="Message"/>.</param>
@@ -67,6 +116,30 @@ public static partial class StateMarkers
         /// <exception cref="ArgumentNullException">if the <paramref name="message"/> string is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
         public InternalError(string message, Exception? exception = default) : this()
+        {
+            ThrowIfNullOrWhiteSpace(message);
+
+            Message = message;
+            Exception = exception;
+        }
+
+        /// <inheritdoc />
+        public string? Message { get; init; }
+
+        /// <inheritdoc />
+        public Exception? Exception { get; init; }
+    }
+
+
+    ///<inheritdoc cref="IErrorStateMarker" />
+    [PublicAPI]
+    public readonly record struct ExternalError : IErrorStateMarker
+    {
+        /// <param name="message"><see cref="Message"/>.</param>
+        /// <param name="exception"><see cref="Exception"/>.</param>
+        /// <exception cref="ArgumentNullException">if the <paramref name="message"/> string is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
+        public ExternalError(string message, Exception? exception = default) : this()
         {
             ThrowIfNullOrWhiteSpace(message);
 
@@ -108,30 +181,6 @@ public static partial class StateMarkers
 
     ///<inheritdoc cref="IErrorStateMarker" />
     [PublicAPI]
-    public readonly record struct AlreadyExists : IErrorStateMarker
-    {
-        /// <param name="message"><see cref="Message"/>.</param>
-        /// <param name="exception"><see cref="Exception"/>.</param>
-        /// <exception cref="ArgumentNullException">if the <paramref name="message"/> string is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
-        public AlreadyExists(string message, Exception? exception = default) : this()
-        {
-            ThrowIfNullOrWhiteSpace(message);
-
-            Message = message;
-            Exception = exception;
-        }
-
-        /// <inheritdoc />
-        public string? Message { get; init; }
-
-        /// <inheritdoc />
-        public Exception? Exception { get; init; }
-    }
-
-
-    ///<inheritdoc cref="IErrorStateMarker" />
-    [PublicAPI]
     public readonly record struct NotExist : IErrorStateMarker
     {
         /// <param name="message"><see cref="Message"/>.</param>
@@ -156,13 +205,13 @@ public static partial class StateMarkers
 
     ///<inheritdoc cref="IErrorStateMarker" />
     [PublicAPI]
-    public readonly record struct NotAdded : IErrorStateMarker
+    public readonly record struct CannotBeAdded : IErrorStateMarker
     {
         /// <param name="message"><see cref="Message"/>.</param>
         /// <param name="exception"><see cref="Exception"/>.</param>
         /// <exception cref="ArgumentNullException">if the <paramref name="message"/> string is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
-        public NotAdded(string message, Exception? exception = default) : this()
+        public CannotBeAdded(string message, Exception? exception = default) : this()
         {
             ThrowIfNullOrWhiteSpace(message);
 
@@ -180,13 +229,13 @@ public static partial class StateMarkers
 
     ///<inheritdoc cref="IErrorStateMarker" />
     [PublicAPI]
-    public readonly record struct NotUpdated : IErrorStateMarker
+    public readonly record struct CannotBeUpdated : IErrorStateMarker
     {
         /// <param name="message"><see cref="Message"/>.</param>
         /// <param name="exception"><see cref="Exception"/>.</param>
         /// <exception cref="ArgumentNullException">if the <paramref name="message"/> string is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
-        public NotUpdated(string message, Exception? exception = default) : this()
+        public CannotBeUpdated(string message, Exception? exception = default) : this()
         {
             ThrowIfNullOrWhiteSpace(message);
 
@@ -228,13 +277,37 @@ public static partial class StateMarkers
 
     ///<inheritdoc cref="IErrorStateMarker" />
     [PublicAPI]
-    public readonly record struct Prohibited : IErrorStateMarker
+    public readonly record struct Unauthorized : IErrorStateMarker
     {
         /// <param name="message"><see cref="Message"/>.</param>
         /// <param name="exception"><see cref="Exception"/>.</param>
         /// <exception cref="ArgumentNullException">if the <paramref name="message"/> string is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
-        public Prohibited(string message, Exception? exception = default) : this()
+        public Unauthorized(string message, Exception? exception = default) : this()
+        {
+            ThrowIfNullOrWhiteSpace(message);
+
+            Message = message;
+            Exception = exception;
+        }
+
+        /// <inheritdoc />
+        public string? Message { get; init; }
+
+        /// <inheritdoc />
+        public Exception? Exception { get; init; }
+    }
+
+
+    ///<inheritdoc cref="IErrorStateMarker" />
+    [PublicAPI]
+    public readonly record struct Forbidden : IErrorStateMarker
+    {
+        /// <param name="message"><see cref="Message"/>.</param>
+        /// <param name="exception"><see cref="Exception"/>.</param>
+        /// <exception cref="ArgumentNullException">if the <paramref name="message"/> string is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">if the <paramref name="message"/> string is empty or contains empty characters.</exception>
+        public Forbidden(string message, Exception? exception = default) : this()
         {
             ThrowIfNullOrWhiteSpace(message);
 

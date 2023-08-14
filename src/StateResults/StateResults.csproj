@@ -5,45 +5,49 @@
         <Product>$(Name)</Product>
         <Title>$(Company).$(Product)</Title>
         <Description>
-            Contains union-types representing either a successful result or a list of possible errors
+            Contains union-types representing either a successful result or a union-list of possible errors
         </Description>
-        <RootNamespace>$(Company).$(Product)</RootNamespace>
-        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
         <PackageId>$(Company).$(Product)</PackageId>
         <PackageDescription>$(Description)</PackageDescription>
-        <PackageTags>unions types results oneof states</PackageTags>
-        <RepositoryUrl>https://github.com/$(Company)/$(Product)</RepositoryUrl>
-        <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="OneOf"/>
+        <ProjectReference Condition="'$(Configuration)'=='Debug'" Include="..\OneOf.Reduced\OneOf.Reduced.csproj"/>
+        <ProjectReference Condition="'$(Configuration)'=='Release'" Include="..\OneOf.Reduced\OneOf.Reduced.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Results.g.tt">
+        <Compile Update="Results.g.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
             <Generator>TextTemplatingFileGenerator</Generator>
             <LastGenOutput>Results.g.cs</LastGenOutput>
-        </None>
-        <None Update="States\StateMarkers.g.tt">
+            <DependentUpon>Results.g.tt</DependentUpon>
+        </Compile>
+        <Compile Update="States\StateMarkers.g.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
             <Generator>TextTemplatingFileGenerator</Generator>
             <LastGenOutput>StateMarkers.g.cs</LastGenOutput>
-        </None>
+            <DependentUpon>StateMarkers.g.tt</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
         <None Update="States\StateMarkers.csv">
             <DependentUpon>StateMarkers.g.tt</DependentUpon>
         </None>
-        <Compile Update="Results.g.cs">
-            <DependentUpon>Results.g.tt</DependentUpon>
-        </Compile>
-        <Compile Update="States\StateMarkers.g.cs">
-            <DependentUpon>StateMarkers.g.tt</DependentUpon>
-        </Compile>
+        <None Update="Results.g.tt">
+          <Generator>TextTemplatingFileGenerator</Generator>
+          <LastGenOutput>Results.g.cs</LastGenOutput>
+        </None>
+        <None Update="States\StateMarkers.g.tt">
+          <Generator>TextTemplatingFileGenerator</Generator>
+          <LastGenOutput>StateMarkers.g.cs</LastGenOutput>
+        </None>
     </ItemGroup>
 
 </Project>

@@ -8,10 +8,13 @@
     var csvFile = Path.Combine(Path.GetDirectoryName(Host.TemplateFile) ?? string.Empty, "StateMarkers.csv");
 
     // Read all lines from the CSV file, skip the header line
-    var csvLines = File.ReadAllLines(csvFile).Skip(1); // Skip the header line
+    var csvLines = File.ReadAllLines(csvFile)
+                       .Where(line => !string.IsNullOrWhiteSpace(line)) // Skip empty lines
+                       .Skip(1); // Skip the header line
 #>
 /*
-    This file was generated automatically, do not make changes to it manually!
+    NOTE: Auto-generated file.
+    Don't make manual changes here.
 */
 #nullable enable
 
@@ -31,9 +34,6 @@ public static partial class StateMarkers
     // Process each line in the CSV file
     foreach (var line in csvLines)
     {
-        if (string.IsNullOrWhiteSpace(line))
-            continue;
-
         // Split the line by comma and trim the parts
         var parts = line.Split(',').Select(p => p.Trim()).ToArray();
         var name = parts[0];

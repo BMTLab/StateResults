@@ -1,0 +1,403 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System.Linq" #>
+/*
+    This file was generated automatically, do not make changes to it manually!
+*/
+#nullable enable
+
+namespace BMTLab.OneOf.Reduced;
+
+<#
+    // Control the maximum number of types
+    const int maxTypes = 6;
+
+    for (var i = 2; i <= maxTypes; i++)
+    {
+        var typesArray = Enumerable.Range(0, i).Select(n => $"T{n}").ToArray();
+        var typesText = string.Join(", ", typesArray);
+#>
+/// <summary>
+///     Represents a type-union that can contain only one of the values.
+/// </summary>
+<#
+        // Set up a comment for each specific type
+        foreach (var specificType in typesArray)
+        {
+#>
+/// <typeparam name="<#= specificType #>">Possible state type.</typeparam>
+<#
+        }
+#>
+[PublicAPI]
+[DebuggerStepThrough]
+[ExcludeFromCodeCoverage]
+public readonly record struct OneOf<<#= typesText #>> : IOneOf
+<#
+        // Set up a comment for each specific type
+        foreach (var specificType in typesArray)
+        {
+#>
+    where <#= specificType #>: notnull
+<#
+        }
+#>
+{
+<#
+        foreach (var specificType in typesArray)
+        {
+#>
+    private readonly <#= specificType #>? _value<#= specificType.Substring(1) #>;
+<#
+        }
+#>
+
+    private OneOf
+    (
+        int index,
+<#
+        for(var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+        {
+#>
+        <#= typesArray[typeIndex] #>? value<#= typeIndex #> = default<#= typeIndex < typesArray.Length - 1 ? "," : "" #>
+<#
+        }
+#>
+    )
+    {
+        Index = index;
+<#
+        foreach (var specificType in typesArray)
+        {
+#>
+        _value<#= specificType.Substring(1) #> = value<#= specificType.Substring(1) #>;
+<#
+        }
+#>
+    }
+
+
+<#
+        // The Properties
+        for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+        {
+#>
+    /// <summary>
+    ///     Checks if the current union state is of type <typeparamref name="T<#= typeIndex #>" />.
+    /// </summary>
+    public bool IsT<#= typeIndex #> => Index == <#= typeIndex #>;
+
+    /// <summary>
+    ///     Trying to cast to type <typeparamref name="T<#= typeIndex #>" />.
+    /// </summary>
+    /// <returns>Returns <c>default(T<#= typeIndex #>)</c> if the union does not store this type.</returns>
+    public T<#= typeIndex #>? AsT<#= typeIndex #> =>
+        IsT<#= typeIndex #> ? _value<#= typeIndex #> : default;
+
+<#
+        }
+#>
+
+    /// <inheritdoc />
+    public object Value =>
+        Index switch
+        {
+<#
+        for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+        {
+#>
+            <#= typeIndex #> when _value<#= typeIndex #> is not null => _value<#= typeIndex #>,
+<#
+        }
+#>
+            var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+
+
+    /// <inheritdoc />
+    public int Index { get; }
+
+
+    #region Operators
+<#
+        // Implicit operators
+        for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+        {
+#>
+    /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
+    public static implicit operator OneOf<<#= typesText #>>(T<#= typeIndex #> value) =>
+        new(<#= typeIndex #>, value<#= typeIndex #>: GetValueOrThrowInvalidCastExceptionIfNull(value));
+
+<#
+        }
+#>
+
+<#
+        // Explicit operators
+        for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+        {
+#>
+    /// <exception cref="InvalidCastException">if the union does not currently store the given type.</exception>
+    public static explicit operator T<#= typeIndex #>(OneOf<<#= typesText #>> value) =>
+        value is { Index: <#= typeIndex #>, _value<#= typeIndex #>: not null } ? value._value<#= typeIndex #> : ThrowInvalidCastException<T<#= typeIndex #>>();
+
+<#
+        }
+#>
+    #endregion _Operators
+
+
+    /// <summary>
+    ///     Executes one of the provided delegates, depending on the current state.
+    /// </summary>
+<#
+        for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+        {
+#>
+    /// <param name="f<#= typeIndex #>">Action that will be executed in case of this state.</param>
+<#
+        }
+#>
+    public void Switch
+    (
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+        Action<T<#= typeIndex #>> f<#= typeIndex #><#= typeIndex < typesArray.Length - 1 ? "," : "" #>
+<#
+            }
+#>
+    )
+    {
+<#
+            for (var actionIndex = 0; actionIndex < typesArray.Length; actionIndex++)
+            {
+#>
+        ThrowIfNull(f<#= actionIndex #>);
+<#
+            }
+#>
+
+        switch (Index)
+        {
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+            case <#= typeIndex #> when _value<#= typeIndex #> is not null:
+            {
+                f<#= typeIndex #>(_value<#= typeIndex #>);
+
+                break;
+            }
+<#
+            }
+#>
+            default: throw new InvalidOperationException(CorruptedMessage);
+        }
+    }
+
+
+    /// <summary>
+    ///     Executes one of the provided delegates, depending on the current state.
+    /// </summary>
+    /// <remarks>Asynchronous version.</remarks>
+<#
+        for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+        {
+#>
+    /// <param name="f<#= typeIndex #>">Action that will be executed in case of this state.</param>
+<#
+        }
+#>
+    public Task SwitchAsync
+    (
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+        Func<T<#= typeIndex #>, Task> f<#= typeIndex #><#= typeIndex < typesArray.Length - 1 ? "," : "" #>
+<#
+            }
+#>
+    )
+    {
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+        ThrowIfNull(f<#= typeIndex #>);
+<#
+            }
+#>
+
+        return Index switch
+        {
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+            <#= typeIndex #> when _value<#= typeIndex #> is not null => f<#= typeIndex #>(_value<#= typeIndex #>),
+<#
+            }
+#>
+            var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+    }
+
+
+    /// <summary>
+    ///     Executes one of the provided delegates, depending on the current state.
+    /// </summary>
+<#
+        for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+        {
+#>
+    /// <param name="f<#= typeIndex #>">Function that will be executed in case of this state.</param>
+<#
+        }
+#>
+    /// <typeparam name="TResult">Type of returning result.</typeparam>
+    /// <returns>The result of one of the delegates.</returns>
+    [Pure]
+    public TResult Match<TResult>
+    (
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+        Func<T<#= typeIndex #>, TResult> f<#= typeIndex #><#= typeIndex < typesArray.Length - 1 ? "," : "" #>
+<#
+            }
+#>
+    )
+    {
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+        ThrowIfNull(f<#= typeIndex #>);
+<#
+            }
+#>
+
+        return Index switch
+        {
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+            <#= typeIndex #> when _value<#= typeIndex #> is not null => f<#= typeIndex #>(_value<#= typeIndex #>),
+<#
+            }
+#>
+            var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+    }
+
+
+    /// <summary>
+    ///     Executes one of the provided delegates, depending on the current state.
+    /// </summary>
+    /// <remarks>Asynchronous version.</remarks>
+<#
+        for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+        {
+#>
+    /// <param name="f<#= typeIndex #>">Function that will be executed in case of this state.</param>
+<#
+        }
+#>
+    /// <typeparam name="TResult">Type of returning result.</typeparam>
+    /// <returns>The result of one of the delegates.</returns>
+    [Pure]
+    public Task<TResult> MatchAsync<TResult>
+    (
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+        Func<T<#= typeIndex #>, Task<TResult>> f<#= typeIndex #><#= typeIndex < typesArray.Length - 1 ? "," : "" #>
+<#
+            }
+#>
+    )
+    {
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+        ThrowIfNull(f<#= typeIndex #>);
+<#
+            }
+#>
+
+        return Index switch
+        {
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+            <#= typeIndex #> when _value<#= typeIndex #> is not null => f<#= typeIndex #>(_value<#= typeIndex #>),
+<#
+            }
+#>
+            var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+    }
+
+
+    /// <returns>
+    ///     Calls <see cref="ToString" /> of the type that stores the union.
+    /// </returns>
+    [Pure]
+    public override string ToString() =>
+        Index switch
+        {
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+            <#= typeIndex #>     => FormatValue(_value<#= typeIndex #>),
+<#
+            }
+#>
+            var _ => string.Empty
+        };
+
+
+    /// <summary>
+    ///     Returns the hash code for this instance based on current state of the union.
+    /// </summary>
+    /// <returns>
+    ///     A 32-bit signed integer that is the hash code for this instance.
+    /// </returns>
+    [Pure]
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = Index switch
+            {
+<#
+                for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+                {
+#>
+                <#= typeIndex #>     => _value<#= typeIndex #>?.GetHashCode(),
+<#
+                }
+#>
+                var _ => default
+            } ?? 0;
+
+            return HashCode.Combine(hashCode, Index);
+        }
+    }
+}
+
+
+<#
+    }
+#>

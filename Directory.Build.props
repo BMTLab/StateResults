@@ -6,8 +6,8 @@
     </PropertyGroup>
 
     <PropertyGroup Label="Version">
-        <Major>1</Major>
-        <Minor>1</Minor>
+        <Major>2</Major>
+        <Minor>0</Minor>
         <Build>$(CurrentDate)</Build>
         <Revision>$(CurrentTime)</Revision>
         <PreReleaseLabel>beta</PreReleaseLabel>
@@ -17,6 +17,7 @@
         <VersionPrefix>$(Major).$(Minor).$(Build).$(Revision)</VersionPrefix>
         <VersionSuffix>$(PreReleaseLabel)</VersionSuffix>
         <Deterministic>true</Deterministic>
+        <RootNamespace>$(Company).$(Name)</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
@@ -24,13 +25,12 @@
         <Authors>Nikita Neverov</Authors>
         <Copyright>Copyright © $([System.DateTime]::Now.Date.Year)</Copyright>
         <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/$(Company)/StateResults</RepositoryUrl>
+        <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
         <PackageVersion>$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <PropertyGroup Label="Framework">
@@ -64,9 +64,6 @@
 
         <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-
-        <!-- Embed source files that are not tracked by the source control manager in the PDB -->
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -77,7 +74,6 @@
     <PropertyGroup Condition="'$(Configuration)'=='Release'">
         <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
         <Optimize>true</Optimize>
-        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
 
     <ItemGroup Label="Annotations">
