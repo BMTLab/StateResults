@@ -14,9 +14,12 @@
         <PackageDescription>$(Description)</PackageDescription>
     </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Condition="'$(Configuration)'=='Debug'" Include="..\OneOf.Reduced\OneOf.Reduced.csproj"/>
-        <ProjectReference Condition="'$(Configuration)'=='Release'" Include="..\OneOf.Reduced\OneOf.Reduced.csproj"/>
+    <ItemGroup Condition="'$(Configuration)'=='Release'">
+        <PackageReference Include="BMTLab.OneOf.Reduced" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)'=='Debug'">
+        <ProjectReference Include="..\OneOf.Reduced\OneOf.Reduced.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

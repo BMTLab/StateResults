@@ -4,8 +4,7 @@
         <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     </PropertyGroup>
     <ItemGroup>
-        <PackageVersion Include="OneOf" Version="[3.0.255, 4.0.0)"/>
-        <PackageVersion Include="Ardalis.GuardClauses" Version="[4.1.1, 5.0.0)"/>
+        <PackageVersion Include="BMTLab.OneOf.Reduced" Version="[2.0.0-*, 3.0.0-*)"/>
     </ItemGroup>
     <ItemGroup Label="Annotations">
         <PackageVersion Include="JetBrains.Annotations" Version="[2023.2.0, 2024.1.0)"/>
