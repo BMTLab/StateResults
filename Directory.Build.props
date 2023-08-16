@@ -11,7 +11,7 @@
         <Build>$(CurrentDate)</Build>
         <Revision>$(CurrentTime)</Revision>
         <PreReleaseLabel>beta</PreReleaseLabel>
-        <IsPreview>true</IsPreview>
+        <IsPreview>false</IsPreview>
     </PropertyGroup>
 
     <PropertyGroup Label="AssemblyInfo">
