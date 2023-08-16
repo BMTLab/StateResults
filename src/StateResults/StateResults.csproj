@@ -15,7 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup Condition="'$(Configuration)'=='Release'">
-        <PackageReference Include="BMTLab.OneOf.Reduced" />
+        <PackageReference Include="BMTLab.OneOf.Reduced"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
@@ -44,12 +44,12 @@
             <DependentUpon>StateMarkers.g.tt</DependentUpon>
         </None>
         <None Update="Results.g.tt">
-          <Generator>TextTemplatingFileGenerator</Generator>
-          <LastGenOutput>Results.g.cs</LastGenOutput>
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Results.g.cs</LastGenOutput>
         </None>
         <None Update="States\StateMarkers.g.tt">
-          <Generator>TextTemplatingFileGenerator</Generator>
-          <LastGenOutput>StateMarkers.g.cs</LastGenOutput>
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>StateMarkers.g.cs</LastGenOutput>
         </None>
     </ItemGroup>
 
