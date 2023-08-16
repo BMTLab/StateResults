@@ -7,10 +7,11 @@
 
     <PropertyGroup Label="Version">
         <Major>2</Major>
-        <Minor>0</Minor>
+        <Minor>1</Minor>
         <Build>$(CurrentDate)</Build>
         <Revision>$(CurrentTime)</Revision>
         <PreReleaseLabel>beta</PreReleaseLabel>
+        <IsPreview>true</IsPreview>
     </PropertyGroup>
 
     <PropertyGroup Label="AssemblyInfo">
@@ -27,10 +28,17 @@
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/$(Company)/StateResults</RepositoryUrl>
         <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
-        <PackageVersion>$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IsPreview)'=='true'">
+        <PackageVersion>$(Major).$(Minor).$(Build).$(Revision)-$(VersionSuffix)</PackageVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IsPreview)'!='true'">
+        <PackageVersion>$(Major).$(Minor).$(Build)</PackageVersion>
     </PropertyGroup>
 
     <PropertyGroup Label="Framework">

@@ -4,10 +4,10 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="BMTLab.OneOf.Reduced" Version="2.0.815.423-beta" />
+    <PackageVersion Include="BMTLab.OneOf.Reduced" Version="2.1.816.1057-beta" />
   </ItemGroup>
   <ItemGroup Label="Annotations">
-    <PackageVersion Include="JetBrains.Annotations" Version="[2023.2.0, 2024.1.0)" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2023.3.0-eap1" />
   </ItemGroup>
   <ItemGroup Label="Analyzers">
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0-beta1.23364.2" />
