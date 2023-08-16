@@ -1,3 +1,6 @@
+#pragma warning disable CS1591
+// Missing XML comment for publicly visible type or member
+
 namespace BMTLab.StateResults;
 
 /// <summary>
@@ -9,7 +12,7 @@ namespace BMTLab.StateResults;
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessResult, IHasErrorResult
+public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TError: notnull
 {
@@ -22,7 +25,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessRes
     /// </summary>
     /// <param name="value">Arbitrary result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(TSuccess value)
+    public Results(in TSuccess value)
     {
         ThrowIfNull(value);
 
@@ -35,7 +38,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessRes
     /// </summary>
     /// <param name="value">Arbitrary error result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(TError value)
+    public Results(in TError value)
     {
         ThrowIfNull(value);
 
@@ -75,21 +78,25 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessRes
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TError>(TSuccess value) =>
+    public static implicit operator Results<TSuccess, TError>(in TSuccess value) =>
         new(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TError>(TError value) =>
+    public static implicit operator Results<TSuccess, TError>(in TError value) =>
         new(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TSuccess(Results<TSuccess, TError> value) =>
+    public static explicit operator TSuccess(in Results<TSuccess, TError> value) =>
         value is { _index: 0, Success: not null } ? value.Success : ThrowInvalidCastException<TSuccess>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TError(Results<TSuccess, TError> value) =>
+    public static explicit operator TError(in Results<TSuccess, TError> value) =>
         value is { _index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<TError>();
+
+
+    public static bool operator true(in Results<TSuccess, TError> result) => result.IsSuccess;
+    public static bool operator false(in Results<TSuccess, TError> result) => result.IsError;
     #endregion _Operators
 
 
@@ -101,7 +108,6 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessRes
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public TResult Match<TResult>
     (
         Func<TSuccess, TResult> success,
@@ -129,7 +135,6 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessRes
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public Task<TResult> MatchAsync<TResult>
     (
         Func<TSuccess, Task<TResult>> success,
@@ -214,6 +219,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessRes
     ///         { Value = InternalError { Message = custom msg, Exception = System.ArgumentException: inner exception msg }, IsSuccess = False }
     ///     </code>
     /// </example>
+    [Pure]
     public override string ToString() =>
         _index switch
         {
@@ -231,18 +237,6 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessRes
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = _index switch
-            {
-                0     => Success?.GetHashCode(),
-                1     => Error?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, _index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(_index, Value);
 }

@@ -16,7 +16,7 @@ namespace BMTLab.StateResults;
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessResult, IHasErrorResult
+public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TE0: notnull
     where TE1: notnull
@@ -31,7 +31,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
     /// </summary>
     /// <param name="value">Arbitrary result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(TSuccess value)
+    public Results(in TSuccess value)
     {
         ThrowIfNull(value);
 
@@ -44,7 +44,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
     /// </summary>
     /// <param name="value">Arbitrary error result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(OneOf<TE0, TE1> value)
+    public Results(in OneOf<TE0, TE1> value)
     {
         ThrowIfNull(value);
 
@@ -84,34 +84,37 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1>(TSuccess value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1>(in TSuccess value) =>
         new Results<TSuccess, TE0, TE1>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1>(TE0 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1>(in TE0 value) =>
         new Results<TSuccess, TE0, TE1>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1>(TE1 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1>(in TE1 value) =>
         new Results<TSuccess, TE0, TE1>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TSuccess(Results<TSuccess, TE0, TE1> value) =>
+    public static explicit operator TSuccess(in Results<TSuccess, TE0, TE1> value) =>
        value is { _index: 0, Success: not null } ? value.Success : ThrowInvalidCastException<TSuccess>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator OneOf<TE0, TE1>(Results<TSuccess, TE0, TE1> value) =>
-        value is { _index: 1, Error: not null } ? value.Error.Value : ThrowInvalidCastException<OneOf<TE0, TE1>>();
+    public static explicit operator OneOf<TE0, TE1>(in Results<TSuccess, TE0, TE1> value) =>
+        value is { _index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<OneOf<TE0, TE1>>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE0(Results<TSuccess, TE0, TE1> value) =>
-        value is { _index: 1, Error: not null } ? (TE0) value.Error.Value : ThrowInvalidCastException<TE0>();
+    public static explicit operator TE0(in Results<TSuccess, TE0, TE1> value) =>
+        value is { _index: 1, Error: not null } ? (TE0) value.Error : ThrowInvalidCastException<TE0>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE1(Results<TSuccess, TE0, TE1> value) =>
-        value is { _index: 1, Error: not null } ? (TE1) value.Error.Value : ThrowInvalidCastException<TE1>();
+    public static explicit operator TE1(in Results<TSuccess, TE0, TE1> value) =>
+        value is { _index: 1, Error: not null } ? (TE1) value.Error : ThrowInvalidCastException<TE1>();
 
+
+    public static bool operator true(in Results<TSuccess, TE0, TE1> result) => result.IsSuccess;
+    public static bool operator false(in Results<TSuccess, TE0, TE1> result) => result.IsError;
     #endregion _Operators
 
 
@@ -123,7 +126,6 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public TResult Match<TResult>
     (
         Func<TSuccess, TResult> success,
@@ -136,7 +138,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -151,7 +153,6 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public Task<TResult> MatchAsync<TResult>
     (
         Func<TSuccess, Task<TResult>> success,
@@ -164,7 +165,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -195,7 +196,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
             }
             case 1 when Error is not null:
             {
-                error(Error.Value);
+                error(Error);
 
                 break;
             }
@@ -223,7 +224,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -253,20 +254,8 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = _index switch
-            {
-                0     => Success?.GetHashCode(),
-                1     => Error?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, _index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(_index, Value);
 }
 
 
@@ -281,7 +270,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessR
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuccessResult, IHasErrorResult
+public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TE0: notnull
     where TE1: notnull
@@ -297,7 +286,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     /// </summary>
     /// <param name="value">Arbitrary result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(TSuccess value)
+    public Results(in TSuccess value)
     {
         ThrowIfNull(value);
 
@@ -310,7 +299,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     /// </summary>
     /// <param name="value">Arbitrary error result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(OneOf<TE0, TE1, TE2> value)
+    public Results(in OneOf<TE0, TE1, TE2> value)
     {
         ThrowIfNull(value);
 
@@ -350,42 +339,45 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2>(TSuccess value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2>(in TSuccess value) =>
         new Results<TSuccess, TE0, TE1, TE2>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2>(TE0 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2>(in TE0 value) =>
         new Results<TSuccess, TE0, TE1, TE2>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2>(TE1 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2>(in TE1 value) =>
         new Results<TSuccess, TE0, TE1, TE2>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2>(TE2 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2>(in TE2 value) =>
         new Results<TSuccess, TE0, TE1, TE2>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TSuccess(Results<TSuccess, TE0, TE1, TE2> value) =>
+    public static explicit operator TSuccess(in Results<TSuccess, TE0, TE1, TE2> value) =>
        value is { _index: 0, Success: not null } ? value.Success : ThrowInvalidCastException<TSuccess>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator OneOf<TE0, TE1, TE2>(Results<TSuccess, TE0, TE1, TE2> value) =>
-        value is { _index: 1, Error: not null } ? value.Error.Value : ThrowInvalidCastException<OneOf<TE0, TE1, TE2>>();
+    public static explicit operator OneOf<TE0, TE1, TE2>(in Results<TSuccess, TE0, TE1, TE2> value) =>
+        value is { _index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<OneOf<TE0, TE1, TE2>>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE0(Results<TSuccess, TE0, TE1, TE2> value) =>
-        value is { _index: 1, Error: not null } ? (TE0) value.Error.Value : ThrowInvalidCastException<TE0>();
+    public static explicit operator TE0(in Results<TSuccess, TE0, TE1, TE2> value) =>
+        value is { _index: 1, Error: not null } ? (TE0) value.Error : ThrowInvalidCastException<TE0>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE1(Results<TSuccess, TE0, TE1, TE2> value) =>
-        value is { _index: 1, Error: not null } ? (TE1) value.Error.Value : ThrowInvalidCastException<TE1>();
+    public static explicit operator TE1(in Results<TSuccess, TE0, TE1, TE2> value) =>
+        value is { _index: 1, Error: not null } ? (TE1) value.Error : ThrowInvalidCastException<TE1>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE2(Results<TSuccess, TE0, TE1, TE2> value) =>
-        value is { _index: 1, Error: not null } ? (TE2) value.Error.Value : ThrowInvalidCastException<TE2>();
+    public static explicit operator TE2(in Results<TSuccess, TE0, TE1, TE2> value) =>
+        value is { _index: 1, Error: not null } ? (TE2) value.Error : ThrowInvalidCastException<TE2>();
 
+
+    public static bool operator true(in Results<TSuccess, TE0, TE1, TE2> result) => result.IsSuccess;
+    public static bool operator false(in Results<TSuccess, TE0, TE1, TE2> result) => result.IsError;
     #endregion _Operators
 
 
@@ -397,7 +389,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public TResult Match<TResult>
     (
         Func<TSuccess, TResult> success,
@@ -410,7 +401,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -425,7 +416,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public Task<TResult> MatchAsync<TResult>
     (
         Func<TSuccess, Task<TResult>> success,
@@ -438,7 +428,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -469,7 +459,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
             }
             case 1 when Error is not null:
             {
-                error(Error.Value);
+                error(Error);
 
                 break;
             }
@@ -497,7 +487,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -527,20 +517,8 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = _index switch
-            {
-                0     => Success?.GetHashCode(),
-                1     => Error?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, _index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(_index, Value);
 }
 
 
@@ -556,7 +534,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IHasSuccessResult, IHasErrorResult
+public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TE0: notnull
     where TE1: notnull
@@ -573,7 +551,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     /// </summary>
     /// <param name="value">Arbitrary result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(TSuccess value)
+    public Results(in TSuccess value)
     {
         ThrowIfNull(value);
 
@@ -586,7 +564,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     /// </summary>
     /// <param name="value">Arbitrary error result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(OneOf<TE0, TE1, TE2, TE3> value)
+    public Results(in OneOf<TE0, TE1, TE2, TE3> value)
     {
         ThrowIfNull(value);
 
@@ -626,50 +604,53 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3>(TSuccess value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3>(in TSuccess value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3>(TE0 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3>(in TE0 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3>(TE1 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3>(in TE1 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3>(TE2 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3>(in TE2 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3>(TE3 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3>(in TE3 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TSuccess(Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
+    public static explicit operator TSuccess(in Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
        value is { _index: 0, Success: not null } ? value.Success : ThrowInvalidCastException<TSuccess>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator OneOf<TE0, TE1, TE2, TE3>(Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
-        value is { _index: 1, Error: not null } ? value.Error.Value : ThrowInvalidCastException<OneOf<TE0, TE1, TE2, TE3>>();
+    public static explicit operator OneOf<TE0, TE1, TE2, TE3>(in Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
+        value is { _index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<OneOf<TE0, TE1, TE2, TE3>>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE0(Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
-        value is { _index: 1, Error: not null } ? (TE0) value.Error.Value : ThrowInvalidCastException<TE0>();
+    public static explicit operator TE0(in Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
+        value is { _index: 1, Error: not null } ? (TE0) value.Error : ThrowInvalidCastException<TE0>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE1(Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
-        value is { _index: 1, Error: not null } ? (TE1) value.Error.Value : ThrowInvalidCastException<TE1>();
+    public static explicit operator TE1(in Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
+        value is { _index: 1, Error: not null } ? (TE1) value.Error : ThrowInvalidCastException<TE1>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE2(Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
-        value is { _index: 1, Error: not null } ? (TE2) value.Error.Value : ThrowInvalidCastException<TE2>();
+    public static explicit operator TE2(in Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
+        value is { _index: 1, Error: not null } ? (TE2) value.Error : ThrowInvalidCastException<TE2>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE3(Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
-        value is { _index: 1, Error: not null } ? (TE3) value.Error.Value : ThrowInvalidCastException<TE3>();
+    public static explicit operator TE3(in Results<TSuccess, TE0, TE1, TE2, TE3> value) =>
+        value is { _index: 1, Error: not null } ? (TE3) value.Error : ThrowInvalidCastException<TE3>();
 
+
+    public static bool operator true(in Results<TSuccess, TE0, TE1, TE2, TE3> result) => result.IsSuccess;
+    public static bool operator false(in Results<TSuccess, TE0, TE1, TE2, TE3> result) => result.IsError;
     #endregion _Operators
 
 
@@ -681,7 +662,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public TResult Match<TResult>
     (
         Func<TSuccess, TResult> success,
@@ -694,7 +674,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -709,7 +689,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public Task<TResult> MatchAsync<TResult>
     (
         Func<TSuccess, Task<TResult>> success,
@@ -722,7 +701,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -753,7 +732,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
             }
             case 1 when Error is not null:
             {
-                error(Error.Value);
+                error(Error);
 
                 break;
             }
@@ -781,7 +760,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -811,20 +790,8 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = _index switch
-            {
-                0     => Success?.GetHashCode(),
-                1     => Error?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, _index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(_index, Value);
 }
 
 
@@ -841,7 +808,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneOf, IHasSuccessResult, IHasErrorResult
+public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TE0: notnull
     where TE1: notnull
@@ -859,7 +826,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     /// </summary>
     /// <param name="value">Arbitrary result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(TSuccess value)
+    public Results(in TSuccess value)
     {
         ThrowIfNull(value);
 
@@ -872,7 +839,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     /// </summary>
     /// <param name="value">Arbitrary error result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(OneOf<TE0, TE1, TE2, TE3, TE4> value)
+    public Results(in OneOf<TE0, TE1, TE2, TE3, TE4> value)
     {
         ThrowIfNull(value);
 
@@ -912,58 +879,61 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(TSuccess value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(in TSuccess value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(TE0 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(in TE0 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(TE1 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(in TE1 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(TE2 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(in TE2 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(TE3 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(in TE3 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(TE4 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(in TE4 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TSuccess(Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
+    public static explicit operator TSuccess(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
        value is { _index: 0, Success: not null } ? value.Success : ThrowInvalidCastException<TSuccess>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator OneOf<TE0, TE1, TE2, TE3, TE4>(Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
-        value is { _index: 1, Error: not null } ? value.Error.Value : ThrowInvalidCastException<OneOf<TE0, TE1, TE2, TE3, TE4>>();
+    public static explicit operator OneOf<TE0, TE1, TE2, TE3, TE4>(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
+        value is { _index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<OneOf<TE0, TE1, TE2, TE3, TE4>>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE0(Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
-        value is { _index: 1, Error: not null } ? (TE0) value.Error.Value : ThrowInvalidCastException<TE0>();
+    public static explicit operator TE0(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
+        value is { _index: 1, Error: not null } ? (TE0) value.Error : ThrowInvalidCastException<TE0>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE1(Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
-        value is { _index: 1, Error: not null } ? (TE1) value.Error.Value : ThrowInvalidCastException<TE1>();
+    public static explicit operator TE1(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
+        value is { _index: 1, Error: not null } ? (TE1) value.Error : ThrowInvalidCastException<TE1>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE2(Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
-        value is { _index: 1, Error: not null } ? (TE2) value.Error.Value : ThrowInvalidCastException<TE2>();
+    public static explicit operator TE2(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
+        value is { _index: 1, Error: not null } ? (TE2) value.Error : ThrowInvalidCastException<TE2>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE3(Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
-        value is { _index: 1, Error: not null } ? (TE3) value.Error.Value : ThrowInvalidCastException<TE3>();
+    public static explicit operator TE3(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
+        value is { _index: 1, Error: not null } ? (TE3) value.Error : ThrowInvalidCastException<TE3>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE4(Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
-        value is { _index: 1, Error: not null } ? (TE4) value.Error.Value : ThrowInvalidCastException<TE4>();
+    public static explicit operator TE4(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> value) =>
+        value is { _index: 1, Error: not null } ? (TE4) value.Error : ThrowInvalidCastException<TE4>();
 
+
+    public static bool operator true(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> result) => result.IsSuccess;
+    public static bool operator false(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> result) => result.IsError;
     #endregion _Operators
 
 
@@ -975,7 +945,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public TResult Match<TResult>
     (
         Func<TSuccess, TResult> success,
@@ -988,7 +957,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -1003,7 +972,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public Task<TResult> MatchAsync<TResult>
     (
         Func<TSuccess, Task<TResult>> success,
@@ -1016,7 +984,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -1047,7 +1015,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
             }
             case 1 when Error is not null:
             {
-                error(Error.Value);
+                error(Error);
 
                 break;
             }
@@ -1075,7 +1043,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -1105,20 +1073,8 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = _index switch
-            {
-                0     => Success?.GetHashCode(),
-                1     => Error?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, _index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(_index, Value);
 }
 
 
@@ -1136,7 +1092,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : IOneOf, IHasSuccessResult, IHasErrorResult
+public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TE0: notnull
     where TE1: notnull
@@ -1155,7 +1111,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     /// </summary>
     /// <param name="value">Arbitrary result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(TSuccess value)
+    public Results(in TSuccess value)
     {
         ThrowIfNull(value);
 
@@ -1168,7 +1124,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     /// </summary>
     /// <param name="value">Arbitrary error result object.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Results(OneOf<TE0, TE1, TE2, TE3, TE4, TE5> value)
+    public Results(in OneOf<TE0, TE1, TE2, TE3, TE4, TE5> value)
     {
         ThrowIfNull(value);
 
@@ -1208,66 +1164,69 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(TSuccess value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(in TSuccess value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(TE0 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(in TE0 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(TE1 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(in TE1 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(TE2 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(in TE2 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(TE3 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(in TE3 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(TE4 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(in TE4 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(TE5 value) =>
+    public static implicit operator Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(in TE5 value) =>
         new Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5>(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TSuccess(Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
+    public static explicit operator TSuccess(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
        value is { _index: 0, Success: not null } ? value.Success : ThrowInvalidCastException<TSuccess>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator OneOf<TE0, TE1, TE2, TE3, TE4, TE5>(Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
-        value is { _index: 1, Error: not null } ? value.Error.Value : ThrowInvalidCastException<OneOf<TE0, TE1, TE2, TE3, TE4, TE5>>();
+    public static explicit operator OneOf<TE0, TE1, TE2, TE3, TE4, TE5>(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
+        value is { _index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<OneOf<TE0, TE1, TE2, TE3, TE4, TE5>>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE0(Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
-        value is { _index: 1, Error: not null } ? (TE0) value.Error.Value : ThrowInvalidCastException<TE0>();
+    public static explicit operator TE0(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
+        value is { _index: 1, Error: not null } ? (TE0) value.Error : ThrowInvalidCastException<TE0>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE1(Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
-        value is { _index: 1, Error: not null } ? (TE1) value.Error.Value : ThrowInvalidCastException<TE1>();
+    public static explicit operator TE1(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
+        value is { _index: 1, Error: not null } ? (TE1) value.Error : ThrowInvalidCastException<TE1>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE2(Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
-        value is { _index: 1, Error: not null } ? (TE2) value.Error.Value : ThrowInvalidCastException<TE2>();
+    public static explicit operator TE2(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
+        value is { _index: 1, Error: not null } ? (TE2) value.Error : ThrowInvalidCastException<TE2>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE3(Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
-        value is { _index: 1, Error: not null } ? (TE3) value.Error.Value : ThrowInvalidCastException<TE3>();
+    public static explicit operator TE3(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
+        value is { _index: 1, Error: not null } ? (TE3) value.Error : ThrowInvalidCastException<TE3>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE4(Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
-        value is { _index: 1, Error: not null } ? (TE4) value.Error.Value : ThrowInvalidCastException<TE4>();
+    public static explicit operator TE4(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
+        value is { _index: 1, Error: not null } ? (TE4) value.Error : ThrowInvalidCastException<TE4>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TE5(Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
-        value is { _index: 1, Error: not null } ? (TE5) value.Error.Value : ThrowInvalidCastException<TE5>();
+    public static explicit operator TE5(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> value) =>
+        value is { _index: 1, Error: not null } ? (TE5) value.Error : ThrowInvalidCastException<TE5>();
 
+
+    public static bool operator true(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> result) => result.IsSuccess;
+    public static bool operator false(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> result) => result.IsError;
     #endregion _Operators
 
 
@@ -1279,7 +1238,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public TResult Match<TResult>
     (
         Func<TSuccess, TResult> success,
@@ -1292,7 +1250,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -1307,7 +1265,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     /// <typeparam name="TResult">Type of returning result.</typeparam>
     /// <returns>The result of one of the delegates.</returns>
     /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
-    [Pure]
     public Task<TResult> MatchAsync<TResult>
     (
         Func<TSuccess, Task<TResult>> success,
@@ -1320,7 +1277,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -1351,7 +1308,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
             }
             case 1 when Error is not null:
             {
-                error(Error.Value);
+                error(Error);
 
                 break;
             }
@@ -1379,7 +1336,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
         return _index switch
         {
             0 when Success is not null => success(Success),
-            1 when Error is not null   => error(Error.Value),
+            1 when Error is not null   => error(Error),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -1409,20 +1366,8 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = _index switch
-            {
-                0     => Success?.GetHashCode(),
-                1     => Error?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, _index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(_index, Value);
 }
 
 

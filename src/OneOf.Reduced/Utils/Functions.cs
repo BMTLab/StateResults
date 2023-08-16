@@ -4,5 +4,5 @@
 [StackTraceHidden]
 internal static class Functions
 {
-    internal static string FormatValue<T>(T? value) => value?.ToString() ?? string.Empty;
+    internal static string FormatValue<T>(in T? value) => value?.ToString() ?? string.Empty;
 }

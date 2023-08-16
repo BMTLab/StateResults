@@ -60,7 +60,7 @@ public class OneOf<<#= typesText #>> : IOneOf, IEquatable<OneOf<<#= typesText #>
         for(var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
         {
 #>
-        <#= typesArray[typeIndex] #>? value<#= typeIndex #> = default<#= typeIndex < typesArray.Length - 1 ? "," : "" #>
+        in <#= typesArray[typeIndex] #>? value<#= typeIndex #> = default<#= typeIndex < typesArray.Length - 1 ? "," : "" #>
 <#
         }
 #>
@@ -126,7 +126,7 @@ public class OneOf<<#= typesText #>> : IOneOf, IEquatable<OneOf<<#= typesText #>
         {
 #>
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<<#= typesText #>>(T<#= typeIndex #> value) =>
+    public static implicit operator OneOf<<#= typesText #>>(in T<#= typeIndex #> value) =>
         new(<#= typeIndex #>, value<#= typeIndex #>: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 <#

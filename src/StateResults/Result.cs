@@ -2,6 +2,7 @@
 // Missing XML comment for publicly visible type or member
 
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace BMTLab.StateResults;
 
@@ -12,7 +13,7 @@ namespace BMTLab.StateResults;
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct Result<T> : IOneOf, IHasSuccessResult, IHasErrorResult
+public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
     where T : notnull
 {
     /// <summary>
@@ -21,7 +22,7 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessResult, IHasErrorRe
     /// <param name="value">Arbitrary result object.</param>
     /// <param name="isSuccess">Marks that the type contains a successful state.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Result(T value, bool isSuccess = true)
+    public Result(in T value, bool isSuccess = true)
     {
         ThrowIfNull(value);
 
@@ -55,16 +56,19 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessResult, IHasErrorRe
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Result<T>(T value) =>
+    public static implicit operator Result<T>(in T value) =>
         new(GetValueOrThrowInvalidCastExceptionIfNull(value), TryPredictIfSuccessType());
 
     /// <exception cref="InvalidCastException">if Value is <c>null</c>.</exception>
-    public static implicit operator Result<T>((T Value, bool IsSuccess) tuple) =>
+    public static implicit operator Result<T>(in (T Value, bool IsSuccess) tuple) =>
         new(GetValueOrThrowInvalidCastExceptionIfNull(tuple.Value), tuple.IsSuccess);
 
 
-    public static explicit operator T(Result<T> value) =>
-        value.Value;
+    public static explicit operator T(in Result<T> value) => value.Value;
+
+
+    public static bool operator true(in Result<T> result) => result.IsSuccess;
+    public static bool operator false(in Result<T> result) => result.IsError;
     #endregion _Operators
 
 
@@ -87,17 +91,11 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessResult, IHasErrorRe
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Value?.GetHashCode() ?? 0;
-
-            return HashCode.Combine(hashCode, IsSuccess ? 0 : 1);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(IsSuccess ? 0 : 1, Value);
 
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool TryPredictIfSuccessType() =>
         !typeof(T).IsAssignableTo(typeof(IErrorStateMarker));
 }

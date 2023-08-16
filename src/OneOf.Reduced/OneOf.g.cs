@@ -23,8 +23,8 @@ public class OneOf<T0, T1> : IOneOf, IEquatable<OneOf<T0, T1>>
     private OneOf
     (
         int index,
-        T0? value0 = default,
-        T1? value1 = default
+        in T0? value0 = default,
+        in T1? value1 = default
     )
     {
         Index = index;
@@ -74,11 +74,11 @@ public class OneOf<T0, T1> : IOneOf, IEquatable<OneOf<T0, T1>>
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1>(T0 value) =>
+    public static implicit operator OneOf<T0, T1>(in T0 value) =>
         new(0, value0: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1>(T1 value) =>
+    public static implicit operator OneOf<T0, T1>(in T1 value) =>
         new(1, value1: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 
@@ -283,9 +283,9 @@ public class OneOf<T0, T1, T2> : IOneOf, IEquatable<OneOf<T0, T1, T2>>
     private OneOf
     (
         int index,
-        T0? value0 = default,
-        T1? value1 = default,
-        T2? value2 = default
+        in T0? value0 = default,
+        in T1? value1 = default,
+        in T2? value2 = default
     )
     {
         Index = index;
@@ -349,15 +349,15 @@ public class OneOf<T0, T1, T2> : IOneOf, IEquatable<OneOf<T0, T1, T2>>
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2>(T0 value) =>
+    public static implicit operator OneOf<T0, T1, T2>(in T0 value) =>
         new(0, value0: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2>(T1 value) =>
+    public static implicit operator OneOf<T0, T1, T2>(in T1 value) =>
         new(1, value1: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2>(T2 value) =>
+    public static implicit operator OneOf<T0, T1, T2>(in T2 value) =>
         new(2, value2: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 
@@ -592,10 +592,10 @@ public class OneOf<T0, T1, T2, T3> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3>>
     private OneOf
     (
         int index,
-        T0? value0 = default,
-        T1? value1 = default,
-        T2? value2 = default,
-        T3? value3 = default
+        in T0? value0 = default,
+        in T1? value1 = default,
+        in T2? value2 = default,
+        in T3? value3 = default
     )
     {
         Index = index;
@@ -673,19 +673,19 @@ public class OneOf<T0, T1, T2, T3> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3>>
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3>(T0 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3>(in T0 value) =>
         new(0, value0: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3>(T1 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3>(in T1 value) =>
         new(1, value1: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3>(T2 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3>(in T2 value) =>
         new(2, value2: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3>(T3 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3>(in T3 value) =>
         new(3, value3: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 
@@ -950,11 +950,11 @@ public class OneOf<T0, T1, T2, T3, T4> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3
     private OneOf
     (
         int index,
-        T0? value0 = default,
-        T1? value1 = default,
-        T2? value2 = default,
-        T3? value3 = default,
-        T4? value4 = default
+        in T0? value0 = default,
+        in T1? value1 = default,
+        in T2? value2 = default,
+        in T3? value3 = default,
+        in T4? value4 = default
     )
     {
         Index = index;
@@ -1046,23 +1046,23 @@ public class OneOf<T0, T1, T2, T3, T4> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4>(T0 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4>(in T0 value) =>
         new(0, value0: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4>(T1 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4>(in T1 value) =>
         new(1, value1: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4>(T2 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4>(in T2 value) =>
         new(2, value2: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4>(T3 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4>(in T3 value) =>
         new(3, value3: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4>(T4 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4>(in T4 value) =>
         new(4, value4: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 
@@ -1357,12 +1357,12 @@ public class OneOf<T0, T1, T2, T3, T4, T5> : IOneOf, IEquatable<OneOf<T0, T1, T2
     private OneOf
     (
         int index,
-        T0? value0 = default,
-        T1? value1 = default,
-        T2? value2 = default,
-        T3? value3 = default,
-        T4? value4 = default,
-        T5? value5 = default
+        in T0? value0 = default,
+        in T1? value1 = default,
+        in T2? value2 = default,
+        in T3? value3 = default,
+        in T4? value4 = default,
+        in T5? value5 = default
     )
     {
         Index = index;
@@ -1468,27 +1468,27 @@ public class OneOf<T0, T1, T2, T3, T4, T5> : IOneOf, IEquatable<OneOf<T0, T1, T2
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(T0 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(in T0 value) =>
         new(0, value0: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(T1 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(in T1 value) =>
         new(1, value1: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(T2 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(in T2 value) =>
         new(2, value2: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(T3 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(in T3 value) =>
         new(3, value3: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(T4 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(in T4 value) =>
         new(4, value4: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is null.</exception>
-    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(T5 value) =>
+    public static implicit operator OneOf<T0, T1, T2, T3, T4, T5>(in T5 value) =>
         new(5, value5: GetValueOrThrowInvalidCastExceptionIfNull(value));
 
 

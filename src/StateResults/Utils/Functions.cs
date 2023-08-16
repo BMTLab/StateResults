@@ -4,7 +4,7 @@
 [StackTraceHidden]
 internal static class Functions
 {
-    internal static string FormatValue<T>(T value, bool isSuccess = true)
+    internal static string FormatValue<T>(in T value, bool isSuccess = true)
     {
         #if NET7_0_OR_GREATER
         return $$"""{ {{nameof(IOneOf.Value)}} = {{value}}, IsSuccess == {{isSuccess}} }""";

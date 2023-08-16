@@ -11,7 +11,7 @@ internal static class ThrowHelper
 
     internal static void ThrowIfNull
     (
-        object? argument,
+        in object? argument,
         [CallerArgumentExpression("argument")] string? paramName = null
     ) =>
         ArgumentNullException.ThrowIfNull(argument, paramName);
@@ -19,7 +19,7 @@ internal static class ThrowHelper
 
     internal static void ThrowIfNullOrWhiteSpace
     (
-        string? argument,
+        in string? argument,
         [CallerArgumentExpression("argument")] string? paramName = null
     )
     {
@@ -48,7 +48,7 @@ internal static class ThrowHelper
 
     internal static T GetValueOrThrowInvalidCastExceptionIfNull<T>
     (
-        T? argument,
+        in T? argument,
         [CallerArgumentExpression("argument")] string? paramName = null
     )
     {
