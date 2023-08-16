@@ -22,8 +22,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
     where TE1: notnull
 {
     // Store an index to track the state of this object
-    // 'short' to align the size of the structure
-    private readonly short _index = 0;
+    private readonly int _index = 0;
 
 
     /// <summary>
@@ -277,8 +276,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     where TE2: notnull
 {
     // Store an index to track the state of this object
-    // 'short' to align the size of the structure
-    private readonly short _index = 0;
+    private readonly int _index = 0;
 
 
     /// <summary>
@@ -542,8 +540,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     where TE3: notnull
 {
     // Store an index to track the state of this object
-    // 'short' to align the size of the structure
-    private readonly short _index = 0;
+    private readonly int _index = 0;
 
 
     /// <summary>
@@ -817,8 +814,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     where TE4: notnull
 {
     // Store an index to track the state of this object
-    // 'short' to align the size of the structure
-    private readonly short _index = 0;
+    private readonly int _index = 0;
 
 
     /// <summary>
@@ -1102,8 +1098,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     where TE5: notnull
 {
     // Store an index to track the state of this object
-    // 'short' to align the size of the structure
-    private readonly short _index = 0;
+    private readonly int _index = 0;
 
 
     /// <summary>

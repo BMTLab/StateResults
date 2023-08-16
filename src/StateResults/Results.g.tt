@@ -49,8 +49,7 @@ public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf,
 #>
 {
     // Store an index to track the state of this object
-    // 'short' to align the size of the structure
-    private readonly short _index = 0;
+    private readonly int _index = 0;
 
 
     /// <summary>

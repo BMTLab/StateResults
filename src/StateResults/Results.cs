@@ -16,10 +16,6 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
     where TSuccess: notnull
     where TError: notnull
 {
-    // Align the size of the structure
-    private readonly short _index = 0;
-
-
     /// <summary>
     ///     Initializes the result object with a successful state.
     /// </summary>
@@ -42,7 +38,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
     {
         ThrowIfNull(value);
 
-        _index = 1;
+        Index = 1;
         Success = default;
         Error = value;
     }
@@ -59,7 +55,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
     public TError? Error { get; }
 
     /// <inheritdoc />
-    public object Value => _index switch
+    public object Value => Index switch
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error,
@@ -67,13 +63,13 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
     };
 
     /// <inheritdoc />
-    public int Index => _index;
+    public int Index { get; } = 0;
 
     /// <inheritdoc />
     public bool IsError => !IsSuccess;
 
     /// <inheritdoc />
-    public bool IsSuccess => _index == 0;
+    public bool IsSuccess => Index == 0;
 
 
     #region Operators
@@ -88,11 +84,11 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
     public static explicit operator TSuccess(in Results<TSuccess, TError> value) =>
-        value is { _index: 0, Success: not null } ? value.Success : ThrowInvalidCastException<TSuccess>();
+        value is { Index: 0, Success: not null } ? value.Success : ThrowInvalidCastException<TSuccess>();
 
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
     public static explicit operator TError(in Results<TSuccess, TError> value) =>
-        value is { _index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<TError>();
+        value is { Index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<TError>();
 
 
     public static bool operator true(in Results<TSuccess, TError> result) => result.IsSuccess;
@@ -117,7 +113,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
         ThrowIfNull(success);
         ThrowIfNull(error);
 
-        return _index switch
+        return Index switch
         {
             0 when Success is not null => success(Success),
             1 when Error is not null   => error(Error),
@@ -144,7 +140,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
         ThrowIfNull(success);
         ThrowIfNull(error);
 
-        return _index switch
+        return Index switch
         {
             0 when Success is not null => success(Success),
             1 when Error is not null   => error(Error),
@@ -168,7 +164,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
         ThrowIfNull(success);
         ThrowIfNull(error);
 
-        switch (_index)
+        switch (Index)
         {
             case 0 when Success is not null:
             {
@@ -203,7 +199,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
         ThrowIfNull(success);
         ThrowIfNull(error);
 
-        return _index switch
+        return Index switch
         {
             0 when Success is not null => success(Success),
             1 when Error is not null   => error(Error),
@@ -221,7 +217,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
     /// </example>
     [Pure]
     public override string ToString() =>
-        _index switch
+        Index switch
         {
             0     => FormatValue(Success),
             1     => FormatValue(Error, false),
@@ -238,5 +234,5 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
