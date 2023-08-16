@@ -33,7 +33,7 @@ namespace BMTLab.OneOf.Reduced;
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct OneOf<<#= typesText #>> : IOneOf
+public class OneOf<<#= typesText #>> : IOneOf, IEquatable<OneOf<<#= typesText #>>>
 <#
         // Set up a comment for each specific type
         foreach (var specificType in typesArray)
@@ -145,6 +145,12 @@ public readonly record struct OneOf<<#= typesText #>> : IOneOf
 <#
         }
 #>
+
+    public static bool operator ==(OneOf<<#= typesText #>> left, OneOf<<#= typesText #>> right)
+        => left.Equals(right);
+
+    public static bool operator !=(OneOf<<#= typesText #>> left, OneOf<<#= typesText #>> right)
+        => !left.Equals(right);
     #endregion _Operators
 
 
@@ -368,6 +374,40 @@ public readonly record struct OneOf<<#= typesText #>> : IOneOf
         };
 
 
+    /// <inheritdoc />
+    public bool Equals(OneOf<<#= typesText #>>? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return Index == other.Index && Index switch
+        {
+<#
+            for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+            {
+#>
+            <#= typeIndex #>     => Equals(_value<#= typeIndex #>, other._value<#= typeIndex #>),
+<#
+            }
+#>
+            var _ => false
+        };
+    }
+
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+
+        return obj is OneOf<<#= typesText #>> oneOfObj && Equals(oneOfObj);
+    }
+
+
     /// <summary>
     ///     Returns the hash code for this instance based on current state of the union.
     /// </summary>
@@ -375,26 +415,8 @@ public readonly record struct OneOf<<#= typesText #>> : IOneOf
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Index switch
-            {
-<#
-                for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
-                {
-#>
-                <#= typeIndex #>     => _value<#= typeIndex #>?.GetHashCode(),
-<#
-                }
-#>
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, Index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(Index, Value);
 }
 
 

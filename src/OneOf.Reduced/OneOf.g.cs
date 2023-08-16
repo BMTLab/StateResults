@@ -13,7 +13,7 @@ namespace BMTLab.OneOf.Reduced;
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct OneOf<T0, T1> : IOneOf
+public class OneOf<T0, T1> : IOneOf, IEquatable<OneOf<T0, T1>>
     where T0: notnull
     where T1: notnull
 {
@@ -90,6 +90,12 @@ public readonly record struct OneOf<T0, T1> : IOneOf
     public static explicit operator T1(OneOf<T0, T1> value) =>
         value is { Index: 1, _value1: not null } ? value._value1 : ThrowInvalidCastException<T1>();
 
+
+    public static bool operator ==(OneOf<T0, T1> left, OneOf<T0, T1> right)
+        => left.Equals(right);
+
+    public static bool operator !=(OneOf<T0, T1> left, OneOf<T0, T1> right)
+        => !left.Equals(right);
     #endregion _Operators
 
 
@@ -216,6 +222,34 @@ public readonly record struct OneOf<T0, T1> : IOneOf
         };
 
 
+    /// <inheritdoc />
+    public bool Equals(OneOf<T0, T1>? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return Index == other.Index && Index switch
+        {
+            0     => Equals(_value0, other._value0),
+            1     => Equals(_value1, other._value1),
+            var _ => false
+        };
+    }
+
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+
+        return obj is OneOf<T0, T1> oneOfObj && Equals(oneOfObj);
+    }
+
+
     /// <summary>
     ///     Returns the hash code for this instance based on current state of the union.
     /// </summary>
@@ -223,20 +257,8 @@ public readonly record struct OneOf<T0, T1> : IOneOf
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Index switch
-            {
-                0     => _value0?.GetHashCode(),
-                1     => _value1?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, Index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -249,7 +271,7 @@ public readonly record struct OneOf<T0, T1> : IOneOf
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct OneOf<T0, T1, T2> : IOneOf
+public class OneOf<T0, T1, T2> : IOneOf, IEquatable<OneOf<T0, T1, T2>>
     where T0: notnull
     where T1: notnull
     where T2: notnull
@@ -351,6 +373,12 @@ public readonly record struct OneOf<T0, T1, T2> : IOneOf
     public static explicit operator T2(OneOf<T0, T1, T2> value) =>
         value is { Index: 2, _value2: not null } ? value._value2 : ThrowInvalidCastException<T2>();
 
+
+    public static bool operator ==(OneOf<T0, T1, T2> left, OneOf<T0, T1, T2> right)
+        => left.Equals(right);
+
+    public static bool operator !=(OneOf<T0, T1, T2> left, OneOf<T0, T1, T2> right)
+        => !left.Equals(right);
     #endregion _Operators
 
 
@@ -499,6 +527,35 @@ public readonly record struct OneOf<T0, T1, T2> : IOneOf
         };
 
 
+    /// <inheritdoc />
+    public bool Equals(OneOf<T0, T1, T2>? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return Index == other.Index && Index switch
+        {
+            0     => Equals(_value0, other._value0),
+            1     => Equals(_value1, other._value1),
+            2     => Equals(_value2, other._value2),
+            var _ => false
+        };
+    }
+
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+
+        return obj is OneOf<T0, T1, T2> oneOfObj && Equals(oneOfObj);
+    }
+
+
     /// <summary>
     ///     Returns the hash code for this instance based on current state of the union.
     /// </summary>
@@ -506,21 +563,8 @@ public readonly record struct OneOf<T0, T1, T2> : IOneOf
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Index switch
-            {
-                0     => _value0?.GetHashCode(),
-                1     => _value1?.GetHashCode(),
-                2     => _value2?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, Index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -534,7 +578,7 @@ public readonly record struct OneOf<T0, T1, T2> : IOneOf
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct OneOf<T0, T1, T2, T3> : IOneOf
+public class OneOf<T0, T1, T2, T3> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3>>
     where T0: notnull
     where T1: notnull
     where T2: notnull
@@ -661,6 +705,12 @@ public readonly record struct OneOf<T0, T1, T2, T3> : IOneOf
     public static explicit operator T3(OneOf<T0, T1, T2, T3> value) =>
         value is { Index: 3, _value3: not null } ? value._value3 : ThrowInvalidCastException<T3>();
 
+
+    public static bool operator ==(OneOf<T0, T1, T2, T3> left, OneOf<T0, T1, T2, T3> right)
+        => left.Equals(right);
+
+    public static bool operator !=(OneOf<T0, T1, T2, T3> left, OneOf<T0, T1, T2, T3> right)
+        => !left.Equals(right);
     #endregion _Operators
 
 
@@ -831,6 +881,36 @@ public readonly record struct OneOf<T0, T1, T2, T3> : IOneOf
         };
 
 
+    /// <inheritdoc />
+    public bool Equals(OneOf<T0, T1, T2, T3>? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return Index == other.Index && Index switch
+        {
+            0     => Equals(_value0, other._value0),
+            1     => Equals(_value1, other._value1),
+            2     => Equals(_value2, other._value2),
+            3     => Equals(_value3, other._value3),
+            var _ => false
+        };
+    }
+
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+
+        return obj is OneOf<T0, T1, T2, T3> oneOfObj && Equals(oneOfObj);
+    }
+
+
     /// <summary>
     ///     Returns the hash code for this instance based on current state of the union.
     /// </summary>
@@ -838,22 +918,8 @@ public readonly record struct OneOf<T0, T1, T2, T3> : IOneOf
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Index switch
-            {
-                0     => _value0?.GetHashCode(),
-                1     => _value1?.GetHashCode(),
-                2     => _value2?.GetHashCode(),
-                3     => _value3?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, Index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -868,7 +934,7 @@ public readonly record struct OneOf<T0, T1, T2, T3> : IOneOf
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct OneOf<T0, T1, T2, T3, T4> : IOneOf
+public class OneOf<T0, T1, T2, T3, T4> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3, T4>>
     where T0: notnull
     where T1: notnull
     where T2: notnull
@@ -1020,6 +1086,12 @@ public readonly record struct OneOf<T0, T1, T2, T3, T4> : IOneOf
     public static explicit operator T4(OneOf<T0, T1, T2, T3, T4> value) =>
         value is { Index: 4, _value4: not null } ? value._value4 : ThrowInvalidCastException<T4>();
 
+
+    public static bool operator ==(OneOf<T0, T1, T2, T3, T4> left, OneOf<T0, T1, T2, T3, T4> right)
+        => left.Equals(right);
+
+    public static bool operator !=(OneOf<T0, T1, T2, T3, T4> left, OneOf<T0, T1, T2, T3, T4> right)
+        => !left.Equals(right);
     #endregion _Operators
 
 
@@ -1212,6 +1284,37 @@ public readonly record struct OneOf<T0, T1, T2, T3, T4> : IOneOf
         };
 
 
+    /// <inheritdoc />
+    public bool Equals(OneOf<T0, T1, T2, T3, T4>? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return Index == other.Index && Index switch
+        {
+            0     => Equals(_value0, other._value0),
+            1     => Equals(_value1, other._value1),
+            2     => Equals(_value2, other._value2),
+            3     => Equals(_value3, other._value3),
+            4     => Equals(_value4, other._value4),
+            var _ => false
+        };
+    }
+
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+
+        return obj is OneOf<T0, T1, T2, T3, T4> oneOfObj && Equals(oneOfObj);
+    }
+
+
     /// <summary>
     ///     Returns the hash code for this instance based on current state of the union.
     /// </summary>
@@ -1219,23 +1322,8 @@ public readonly record struct OneOf<T0, T1, T2, T3, T4> : IOneOf
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Index switch
-            {
-                0     => _value0?.GetHashCode(),
-                1     => _value1?.GetHashCode(),
-                2     => _value2?.GetHashCode(),
-                3     => _value3?.GetHashCode(),
-                4     => _value4?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, Index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -1251,7 +1339,7 @@ public readonly record struct OneOf<T0, T1, T2, T3, T4> : IOneOf
 [PublicAPI]
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
-public readonly record struct OneOf<T0, T1, T2, T3, T4, T5> : IOneOf
+public class OneOf<T0, T1, T2, T3, T4, T5> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3, T4, T5>>
     where T0: notnull
     where T1: notnull
     where T2: notnull
@@ -1428,6 +1516,12 @@ public readonly record struct OneOf<T0, T1, T2, T3, T4, T5> : IOneOf
     public static explicit operator T5(OneOf<T0, T1, T2, T3, T4, T5> value) =>
         value is { Index: 5, _value5: not null } ? value._value5 : ThrowInvalidCastException<T5>();
 
+
+    public static bool operator ==(OneOf<T0, T1, T2, T3, T4, T5> left, OneOf<T0, T1, T2, T3, T4, T5> right)
+        => left.Equals(right);
+
+    public static bool operator !=(OneOf<T0, T1, T2, T3, T4, T5> left, OneOf<T0, T1, T2, T3, T4, T5> right)
+        => !left.Equals(right);
     #endregion _Operators
 
 
@@ -1642,6 +1736,38 @@ public readonly record struct OneOf<T0, T1, T2, T3, T4, T5> : IOneOf
         };
 
 
+    /// <inheritdoc />
+    public bool Equals(OneOf<T0, T1, T2, T3, T4, T5>? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return Index == other.Index && Index switch
+        {
+            0     => Equals(_value0, other._value0),
+            1     => Equals(_value1, other._value1),
+            2     => Equals(_value2, other._value2),
+            3     => Equals(_value3, other._value3),
+            4     => Equals(_value4, other._value4),
+            5     => Equals(_value5, other._value5),
+            var _ => false
+        };
+    }
+
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+
+        return obj is OneOf<T0, T1, T2, T3, T4, T5> oneOfObj && Equals(oneOfObj);
+    }
+
+
     /// <summary>
     ///     Returns the hash code for this instance based on current state of the union.
     /// </summary>
@@ -1649,24 +1775,8 @@ public readonly record struct OneOf<T0, T1, T2, T3, T4, T5> : IOneOf
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = Index switch
-            {
-                0     => _value0?.GetHashCode(),
-                1     => _value1?.GetHashCode(),
-                2     => _value2?.GetHashCode(),
-                3     => _value3?.GetHashCode(),
-                4     => _value4?.GetHashCode(),
-                5     => _value5?.GetHashCode(),
-                var _ => default
-            } ?? 0;
-
-            return HashCode.Combine(hashCode, Index);
-        }
-    }
+    public override int GetHashCode() =>
+        HashCode.Combine(Index, Value);
 }
 
 
