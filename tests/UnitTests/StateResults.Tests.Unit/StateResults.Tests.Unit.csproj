@@ -4,8 +4,4 @@
         <ProjectReference Include="..\..\..\src\StateResults\StateResults.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Remove="JetBrains.Annotations" />
-    </ItemGroup>
-
 </Project>

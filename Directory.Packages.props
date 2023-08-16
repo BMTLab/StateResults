@@ -7,11 +7,11 @@
     <PackageVersion Include="BMTLab.OneOf.Reduced" Version="2.1.816.1057-beta" />
   </ItemGroup>
   <ItemGroup Label="Annotations">
-    <PackageVersion Include="JetBrains.Annotations" Version="2023.3.0-eap1" />
+    <PackageVersion Include="JetBrains.Annotations" Version="[2023.2.0, 2024.0.0)" />
   </ItemGroup>
   <ItemGroup Label="Analyzers">
-    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0-beta1.23364.2" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0-preview1.23165.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="[3.3.4, 4.0.0)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="[7.0.3, 10.0.0)" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="9.7.0.75501" />
   </ItemGroup>
   <ItemGroup>
