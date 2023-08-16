@@ -2,6 +2,8 @@
     This file was generated automatically, do not make changes to it manually!
 */
 #nullable enable
+#pragma warning disable CS1591
+// Missing XML comment for publicly visible type or member
 
 namespace BMTLab.OneOf.Reduced;
 
