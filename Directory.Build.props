@@ -7,7 +7,7 @@
 
     <PropertyGroup Label="Version">
         <Major>2</Major>
-        <Minor>1</Minor>
+        <Minor>2</Minor>
         <Build>$(CurrentDate)</Build>
         <Revision>$(CurrentTime)</Revision>
         <PreReleaseLabel>beta</PreReleaseLabel>
