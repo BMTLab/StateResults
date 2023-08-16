@@ -34,7 +34,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(IsPreview)'=='true'">
-        <PackageVersion>$(Major).$(Minor).$(Build).$(Revision)-$(VersionSuffix)</PackageVersion>
+        <PackageVersion>$(Major).$(Minor).$(Build)-$(VersionSuffix)</PackageVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(IsPreview)'!='true'">
