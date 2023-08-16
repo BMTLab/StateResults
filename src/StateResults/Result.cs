@@ -53,6 +53,7 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessResult, IHasErrorRe
     public int Index => 0;
 
 
+    #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
     public static implicit operator Result<T>(T value) =>
         new(GetValueOrThrowInvalidCastExceptionIfNull(value), TryPredictIfSuccessType());
@@ -64,6 +65,7 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessResult, IHasErrorRe
 
     public static explicit operator T(Result<T> value) =>
         value.Value;
+    #endregion _Operators
 
 
     /// <inheritdoc />

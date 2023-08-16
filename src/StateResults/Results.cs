@@ -73,6 +73,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessRes
     public bool IsSuccess => _index == 0;
 
 
+    #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
     public static implicit operator Results<TSuccess, TError>(TSuccess value) =>
         new(GetValueOrThrowInvalidCastExceptionIfNull(value));
@@ -89,6 +90,7 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessRes
     /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
     public static explicit operator TError(Results<TSuccess, TError> value) =>
         value is { _index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<TError>();
+    #endregion _Operators
 
 
     /// <summary>
