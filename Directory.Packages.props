@@ -4,7 +4,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="BMTLab.OneOf.Reduced" Version="2.1.816.1057-beta" />
+    <PackageVersion Include="BMTLab.OneOf.Reduced" Version="[2.1.816, 3.0.0)" />
   </ItemGroup>
   <ItemGroup Label="Annotations">
     <PackageVersion Include="JetBrains.Annotations" Version="[2023.2.0, 2024.0.0)" />
