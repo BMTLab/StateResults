@@ -19,5 +19,5 @@ public interface IOneOf
     ///     Returns the sequence positive number of the type that stores this union.
     /// </summary>
     /// <example>0</example>
-    public int Index { get; }
+    int Index { get; }
 }
