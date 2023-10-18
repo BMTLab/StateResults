@@ -10,7 +10,6 @@
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
 
         <NoWarn>$(NoWarn);CA1707</NoWarn><!--Remove underscore in method name-->
-        <NoWarn>$(NoWarn);CA1848</NoWarn><!--Use the LoggerMessage delegates-->
     </PropertyGroup>
 
 </Project>

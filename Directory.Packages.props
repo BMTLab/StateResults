@@ -10,9 +10,9 @@
     <PackageVersion Include="JetBrains.Annotations" Version="[2023.2.0, 2024.0.0)" />
   </ItemGroup>
   <ItemGroup Label="Analyzers">
-    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="[3.3.4, 4.0.0)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="[7.0.3, 10.0.0)" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="9.7.0.75501" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0-beta1.23472.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0-preview.23472.1" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="9.12.0.78982" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
