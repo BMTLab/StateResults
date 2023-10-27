@@ -63,7 +63,6 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
     public static implicit operator Result<T>(in (T Value, bool IsSuccess) tuple) =>
         new(GetValueOrThrowInvalidCastExceptionIfNull(tuple.Value), tuple.IsSuccess);
 
-
     public static explicit operator T(in Result<T> value) => value.Value;
 
 
