@@ -148,6 +148,39 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
     /// <summary>
     ///     Executes one of the provided delegates, depending on the current result.
     /// </summary>
+    /// <param name="success">Function that will be executed in case of an unsuccessful state.</param>
+    /// <param name="error0">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error1">Function that will be executed in case of this unsuccessful state.</param>
+    /// <typeparam name="TResult">Type of returning result.</typeparam>
+    /// <returns>The result of one of the delegates.</returns>
+    /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
+    public TResult Match<TResult>
+    (
+        Func<TSuccess, TResult> success,
+        Func<TE0, TResult> error0,
+        Func<TE1, TResult> error1
+    )
+    {
+        ThrowIfNull(success);
+        ThrowIfNull(error0);
+        ThrowIfNull(error1);
+
+        return _index switch
+        {
+            0 when Success is not null => success(Success),
+            1 when Error is not null   => Error.Match
+            (
+                error0,
+                error1
+            ),
+            var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+    }
+
+
+    /// <summary>
+    ///     Executes one of the provided delegates, depending on the current result.
+    /// </summary>
     /// <remarks>Asynchronous version.</remarks>
     /// <param name="success">Function that will be executed in case of an unsuccessful state.</param>
     /// <param name="error">Function that will be executed in case of an unsuccessful state.</param>
@@ -402,6 +435,43 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
         {
             0 when Success is not null => success(Success),
             1 when Error is not null   => error(Error),
+            var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+    }
+
+
+    /// <summary>
+    ///     Executes one of the provided delegates, depending on the current result.
+    /// </summary>
+    /// <param name="success">Function that will be executed in case of an unsuccessful state.</param>
+    /// <param name="error0">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error1">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error2">Function that will be executed in case of this unsuccessful state.</param>
+    /// <typeparam name="TResult">Type of returning result.</typeparam>
+    /// <returns>The result of one of the delegates.</returns>
+    /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
+    public TResult Match<TResult>
+    (
+        Func<TSuccess, TResult> success,
+        Func<TE0, TResult> error0,
+        Func<TE1, TResult> error1,
+        Func<TE2, TResult> error2
+    )
+    {
+        ThrowIfNull(success);
+        ThrowIfNull(error0);
+        ThrowIfNull(error1);
+        ThrowIfNull(error2);
+
+        return _index switch
+        {
+            0 when Success is not null => success(Success),
+            1 when Error is not null   => Error.Match
+            (
+                error0,
+                error1,
+                error2
+            ),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -674,6 +744,47 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
         {
             0 when Success is not null => success(Success),
             1 when Error is not null   => error(Error),
+            var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+    }
+
+
+    /// <summary>
+    ///     Executes one of the provided delegates, depending on the current result.
+    /// </summary>
+    /// <param name="success">Function that will be executed in case of an unsuccessful state.</param>
+    /// <param name="error0">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error1">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error2">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error3">Function that will be executed in case of this unsuccessful state.</param>
+    /// <typeparam name="TResult">Type of returning result.</typeparam>
+    /// <returns>The result of one of the delegates.</returns>
+    /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
+    public TResult Match<TResult>
+    (
+        Func<TSuccess, TResult> success,
+        Func<TE0, TResult> error0,
+        Func<TE1, TResult> error1,
+        Func<TE2, TResult> error2,
+        Func<TE3, TResult> error3
+    )
+    {
+        ThrowIfNull(success);
+        ThrowIfNull(error0);
+        ThrowIfNull(error1);
+        ThrowIfNull(error2);
+        ThrowIfNull(error3);
+
+        return _index switch
+        {
+            0 when Success is not null => success(Success),
+            1 when Error is not null   => Error.Match
+            (
+                error0,
+                error1,
+                error2,
+                error3
+            ),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -956,6 +1067,51 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
         {
             0 when Success is not null => success(Success),
             1 when Error is not null   => error(Error),
+            var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+    }
+
+
+    /// <summary>
+    ///     Executes one of the provided delegates, depending on the current result.
+    /// </summary>
+    /// <param name="success">Function that will be executed in case of an unsuccessful state.</param>
+    /// <param name="error0">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error1">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error2">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error3">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error4">Function that will be executed in case of this unsuccessful state.</param>
+    /// <typeparam name="TResult">Type of returning result.</typeparam>
+    /// <returns>The result of one of the delegates.</returns>
+    /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
+    public TResult Match<TResult>
+    (
+        Func<TSuccess, TResult> success,
+        Func<TE0, TResult> error0,
+        Func<TE1, TResult> error1,
+        Func<TE2, TResult> error2,
+        Func<TE3, TResult> error3,
+        Func<TE4, TResult> error4
+    )
+    {
+        ThrowIfNull(success);
+        ThrowIfNull(error0);
+        ThrowIfNull(error1);
+        ThrowIfNull(error2);
+        ThrowIfNull(error3);
+        ThrowIfNull(error4);
+
+        return _index switch
+        {
+            0 when Success is not null => success(Success),
+            1 when Error is not null   => Error.Match
+            (
+                error0,
+                error1,
+                error2,
+                error3,
+                error4
+            ),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }
@@ -1248,6 +1404,55 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
         {
             0 when Success is not null => success(Success),
             1 when Error is not null   => error(Error),
+            var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+    }
+
+
+    /// <summary>
+    ///     Executes one of the provided delegates, depending on the current result.
+    /// </summary>
+    /// <param name="success">Function that will be executed in case of an unsuccessful state.</param>
+    /// <param name="error0">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error1">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error2">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error3">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error4">Function that will be executed in case of this unsuccessful state.</param>
+    /// <param name="error5">Function that will be executed in case of this unsuccessful state.</param>
+    /// <typeparam name="TResult">Type of returning result.</typeparam>
+    /// <returns>The result of one of the delegates.</returns>
+    /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
+    public TResult Match<TResult>
+    (
+        Func<TSuccess, TResult> success,
+        Func<TE0, TResult> error0,
+        Func<TE1, TResult> error1,
+        Func<TE2, TResult> error2,
+        Func<TE3, TResult> error3,
+        Func<TE4, TResult> error4,
+        Func<TE5, TResult> error5
+    )
+    {
+        ThrowIfNull(success);
+        ThrowIfNull(error0);
+        ThrowIfNull(error1);
+        ThrowIfNull(error2);
+        ThrowIfNull(error3);
+        ThrowIfNull(error4);
+        ThrowIfNull(error5);
+
+        return _index switch
+        {
+            0 when Success is not null => success(Success),
+            1 when Error is not null   => Error.Match
+            (
+                error0,
+                error1,
+                error2,
+                error3,
+                error4,
+                error5
+            ),
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
     }

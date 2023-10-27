@@ -181,6 +181,63 @@ public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf,
     /// <summary>
     ///     Executes one of the provided delegates, depending on the current result.
     /// </summary>
+    /// <param name="success">Function that will be executed in case of an unsuccessful state.</param>
+<#
+                for (var errorTypeIndex = 0; errorTypeIndex < errorTypesArray.Length; errorTypeIndex++)
+                {
+#>
+    /// <param name="error<#= errorTypeIndex #>">Function that will be executed in case of this unsuccessful state.</param>
+<#
+                }
+#>
+    /// <typeparam name="TResult">Type of returning result.</typeparam>
+    /// <returns>The result of one of the delegates.</returns>
+    /// <exception cref="ArgumentNullException">Any of the delegates is <c>null</c>.</exception>
+    public TResult Match<TResult>
+    (
+        Func<TSuccess, TResult> success,
+<#
+                for (var errorTypeIndex = 0; errorTypeIndex < errorTypesArray.Length; errorTypeIndex++)
+                {
+#>
+        Func<TE<#= errorTypeIndex #>, TResult> error<#= errorTypeIndex #><# WriteLine(errorTypeIndex != errorTypesArray.Length - 1 ? "," : string.Empty ); #>
+<#
+                }
+#>
+    )
+    {
+        ThrowIfNull(success);
+<#
+                for (var errorTypeIndex = 0; errorTypeIndex < errorTypesArray.Length; errorTypeIndex++)
+                {
+#>
+        ThrowIfNull(error<#= errorTypeIndex #>);
+<#
+                }
+#>
+
+        return _index switch
+        {
+            0 when Success is not null => success(Success),
+            1 when Error is not null   => Error.Match
+            (
+<#
+                for (var errorTypeIndex = 0; errorTypeIndex < errorTypesArray.Length; errorTypeIndex++)
+                {
+#>
+                error<#= errorTypeIndex #><# WriteLine(errorTypeIndex != errorTypesArray.Length - 1 ? "," : string.Empty ); #>
+<#
+                }
+#>
+            ),
+            var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+    }
+
+
+    /// <summary>
+    ///     Executes one of the provided delegates, depending on the current result.
+    /// </summary>
     /// <remarks>Asynchronous version.</remarks>
     /// <param name="success">Function that will be executed in case of an unsuccessful state.</param>
     /// <param name="error">Function that will be executed in case of an unsuccessful state.</param>
