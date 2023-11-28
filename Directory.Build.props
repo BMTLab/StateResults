@@ -15,8 +15,6 @@
     </PropertyGroup>
 
     <PropertyGroup Label="AssemblyInfo">
-        <VersionPrefix>$(Major).$(Minor).$(Build).$(Revision)</VersionPrefix>
-        <VersionSuffix>$(PreReleaseLabel)</VersionSuffix>
         <Deterministic>true</Deterministic>
         <RootNamespace>$(Company).$(Name)</RootNamespace>
     </PropertyGroup>
@@ -34,11 +32,14 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(IsPreview)'=='true'">
-        <PackageVersion>$(Major).$(Minor).$(Build)-$(VersionSuffix)</PackageVersion>
+        <VersionPrefix>$(Major).$(Minor).$(Build).$(Revision)</VersionPrefix>
+        <VersionSuffix>$(PreReleaseLabel)</VersionSuffix>
+        <PackageVersion>$(VersionPrefix).$(VersionSuffix)</PackageVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(IsPreview)'!='true'">
-        <PackageVersion>$(Major).$(Minor).$(Build)</PackageVersion>
+        <VersionPrefix>$(Major).$(Minor).$(Build)</VersionPrefix>
+        <PackageVersion>$(VersionPrefix)</PackageVersion>
     </PropertyGroup>
 
     <PropertyGroup Label="Framework">
