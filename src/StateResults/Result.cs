@@ -38,6 +38,7 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
 
 
     /// <inheritdoc />
+    [DefaultValue(false)]
     public bool IsError => !IsSuccess;
 
 
