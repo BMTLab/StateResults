@@ -18,8 +18,4 @@
         <ProjectReference Include="..\OneOf.Reduced\OneOf.Reduced.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Remove="JetBrains.Annotations" />
-    </ItemGroup>
-
 </Project>
