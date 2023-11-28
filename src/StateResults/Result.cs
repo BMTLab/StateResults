@@ -92,7 +92,7 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(IsSuccess ? 0 : 1, Value);
+        HashCode.Combine(IsSuccess.GetHashCode(), Value);
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
