@@ -68,6 +68,8 @@ public class OneOf<<#= typesText #>> : IOneOf, IEquatable<OneOf<<#= typesText #>
 #>
     )
     {
+        Debug.Assert(index < 0, CorruptedMessage);
+
         Index = index;
 <#
         foreach (var specificType in typesArray)
