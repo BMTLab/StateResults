@@ -17,7 +17,7 @@ namespace BMTLab.OneOf.Reduced;
 
     for (var i = 2; i <= maxTypes; i++)
     {
-        var typesArray = Enumerable.Range(0, i).Select(n => $"T{n}").ToArray();
+        var typesArray = Enumerable.Range(0, i).Select(static n => $"T{n}").ToArray();
         var typesText = string.Join(", ", typesArray);
 #>
 /// <summary>

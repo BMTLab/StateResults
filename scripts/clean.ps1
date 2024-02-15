@@ -4,7 +4,7 @@ This script cleans specified directories and files in a project.
 #>
 
 # Print start message
-Write-Host "Cleaning projects"
+Write-Host "Cleaning projects.."
 
 # Function to clean specified directories
 function Clean-Directories
@@ -36,4 +36,4 @@ Clean-Directories -Pattern "out"
 Clean-Files -Pattern "VERSION.g.txt"
 
 # Print completion message
-Write-Host "Cleaning completed"
+Write-Host "Success. Cleaning completed"

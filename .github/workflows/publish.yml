@@ -1,0 +1,214 @@
+name: publish
+
+env:
+  DRY_RUN: false # 'true' to test the workflow
+  NUGET_URL: https://api.nuget.org/v3/index.json
+  INDEXING_TIMEOUT: 300 # seconds
+  DOTNET_SDK_VERSION: 8.0.x
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  ONEOF_REDUCED_PROJECT_PATH: ./src/OneOf.Reduced/OneOf.Reduced.csproj
+  STATERESULTS_PROJECT_PATH: ./src/StateResults/StateResults.csproj
+  STATERESULTS_GENERATOR_PROJECT_PATH: ./src/StateResults.Generator/StateResults.Generator.csproj
+  PUBLISH_DIR: publish
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-set-flags:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+        run: dotnet --info
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: |
+          git update-index --chmod=+x
+          dotnet build --no-restore -c Release
+
+      - name: Test
+        id: test
+        run: |
+          dotnet test --no-restore --no-build -c Release --verbosity normal
+          echo ::set-output name=exit_code::$?
+
+      # Also, setting the PRERELEASE flag depending on the contents of the version file.
+      - name: Read Version
+        run: |
+          VERSION_CONTENT=$(cat src/StateResults/VERSION.g.txt)
+          echo "VERSION=$VERSION_CONTENT" >> $GITHUB_ENV
+          if [[ "$VERSION_CONTENT" == *-* ]]; then
+            echo "PRERELEASE=true" >> $GITHUB_ENV
+          else
+            echo "PRERELEASE=false" >> $GITHUB_ENV
+        shell: bash
+
+  publish-OneOf-Reduced:
+    needs: build-and-set-flags
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+
+      - name: Pack BMTLab.OneOf.Reduced
+        run: dotnet pack ${{ env.ONEOF_REDUCED_PROJECT_PATH }} -c Release --include-symbols --include-source /p:PackageVersion=${{ env.VERSION }} -o ${{ env.PUBLISH_DIR }}
+
+      - name: Upload Artifacts of BMTLab.OneOf.Reduced
+        uses: actions/upload-artifact@v4
+        with:
+          name: OneOf-Reduced-NuGetArtifacts
+          path: ${{ env.PUBLISH_DIR }}/*.nupkg
+        continue-on-error: true
+
+      - name: Push NuGet for BMTLab.OneOf.Reduced
+        if: ${{ !env.DRY_RUN }}
+        run: dotnet nuget push ./*.nupkg --source ${{ env.NUGET_URL }} --api-key ${{ secrets.NUGET_API_KEY }}
+
+  update-package-version:
+    runs-on: ubuntu-latest
+    needs: publish-OneOf-Reduced
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Necessary for correct work with history and tags
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+
+      - name: Update Directory.Packages.props
+        run: |
+          chmod +x ./scripts/rewrite-pkg-version.sh
+          ./scripts/rewrite-pkg-version.sh -f "../Directory.Packages.props" -p "BMTLab.OneOf.Reduced" -v ${{ env.VERSION }}
+        shell: bash
+
+      - name: Commit updated version
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Actions"
+          git add Directory.Packages.props
+          git commit -m "[GitHub Actions] Release ${{ env.VERSION }}"
+          git push
+
+      - name: Push Git Tag
+        if: ${{ success() && !env.DRY_RUN && github.ref == 'refs/heads/main' }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a ${{ env.VERSION }} -m "Release ${{ env.VERSION }}"
+          git push origin ${{ env.VERSION }}
+
+  delay-for-nuget-indexing:
+    needs: publish-OneOf-Reduced
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Waiting for NuGet Package Indexing
+        run: |
+          sleep ${{ env.INDEXING_TIMEOUT }} # seconds
+          chmod +x ./scripts/check-nuget-pkg-indexed.sh
+          ./scripts/check-nuget-pkg-indexed.sh -p "BMTLab.OneOf.Reduced" -v "${{ env.VERSION }}"
+        shell: bash
+
+  publish-StateResults:
+    needs: [ delay-for-nuget-indexing]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+
+      - name: Pack BMTLab.StateResults
+        run: |
+          dotnet pack ${{ env.STATERESULTS_PROJECT_PATH }} -c Release --include-symbols --include-source /p:PackageVersion=${{ env.VERSION }} -o ${{ env.PUBLISH_DIR }}
+
+      - name: Upload Artifacts of BMTLab.StateResults
+        uses: actions/upload-artifact@v4
+        with:
+          name: StateResults-NuGetArtifacts
+          path: ${{ env.PUBLISH_DIR }}/*.nupkg
+        continue-on-error: true
+
+      - name: Push NuGet for BMTLab.StateResults
+        if: ${{ !env.DRY_RUN }}
+        run: dotnet nuget push ./*.nupkg --source ${{ env.NUGET_URL }} --api-key ${{ secrets.NUGET_API_KEY }}
+
+  publish-StateResults-Generator:
+    needs: [ delay-for-nuget-indexing]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+
+      - name: Pack BMTLab.StateResults.Generator
+        run: |
+          dotnet pack ${{ env.STATERESULTS_GENERATOR_PROJECT_PATH }} -c Release --include-symbols --include-source /p:PackageVersion=${{ env.VERSION }} -o ${{ env.PUBLISH_DIR }}
+
+      - name: Upload Artifacts of BMTLab.StateResults.Generator
+        uses: actions/upload-artifact@v4
+        with:
+          name: StateResults-Generator-NuGetArtifacts
+          path: ${{ env.PUBLISH_DIR }}/*.nupkg
+        continue-on-error: true
+
+      - name: Push NuGet for BMTLab.StateResults.Generator
+        if: ${{ !env.DRY_RUN }}
+        run: dotnet nuget push ./*.nupkg --source ${{ env.NUGET_URL }} --api-key ${{ secrets.NUGET_API_KEY }}
+
+  create-GitHub-Release:
+    needs: [ publish-OneOf-Reduced, publish-StateResults, publish-StateResults-Generator ]
+    if: ${{ github.ref == 'refs/heads/main' && !env.DRY_RUN }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ env.PUBLISH_DIR }}
+        continue-on-error: true
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: Release ${{ env.VERSION }}
+          draft: false
+          prerelease: ${{ env.PRERELEASE }}
+
+      - name: Upload Artifacts to Release
+        run: |
+          for file in ./${{ env.PUBLISH_DIR }}/*; do
+            echo "Uploading artifact: ${file}..."
+            curl \
+              -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: $(file -b --mime-type "${file}")" \
+              --data-binary @"${file}" \
+              "${{ steps.create_release.outputs.upload_url }}?name=$(basename "${file}")"
+          done
+        shell: bash
+        continue-on-error: true

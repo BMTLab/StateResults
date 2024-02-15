@@ -1,0 +1,6 @@
+NAME,TYPE
+Success,success
+Deprecated,error
+NotImplemented,error
+Unauthorized,error
+Forbidden,error

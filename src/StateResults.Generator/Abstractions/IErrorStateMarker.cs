@@ -9,5 +9,5 @@ public interface IErrorStateMarker : IStateMarker
     /// <summary>
     ///     Aggregates the exception that led to this result.
     /// </summary>
-    public Exception? Exception { get; init; }
+    public Exception? Exception { get; }
 }

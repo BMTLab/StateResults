@@ -10,6 +10,8 @@
 #pragma warning disable CS1591
 // Missing XML comment for publicly visible type or member
 
+using BMTLab.OneOf.Reduced;
+
 namespace BMTLab.StateResults;
 
 <#
@@ -18,7 +20,7 @@ namespace BMTLab.StateResults;
 
     for (var i = 2; i <= maxErrorTypes; i++)
     {
-        var errorTypesArray = Enumerable.Range(0, i).Select(n => $"TE{n}").ToArray();
+        var errorTypesArray = Enumerable.Range(0, i).Select(static n => $"TE{n}").ToArray();
         var errorTypesText = string.Join(", ", errorTypesArray);
         var errorUnionText = $"OneOf<{errorTypesText}>";
 #>

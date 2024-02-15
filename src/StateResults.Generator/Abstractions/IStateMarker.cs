@@ -9,5 +9,5 @@ public interface IStateMarker
     /// <summary>
     ///     User message about the result of the operation.
     /// </summary>
-    public string? Message { get; init; }
+    public string? Message { get; }
 }

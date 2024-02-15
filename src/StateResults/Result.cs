@@ -2,7 +2,6 @@
 // Missing XML comment for publicly visible type or member
 
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace BMTLab.StateResults;
 
@@ -16,13 +15,16 @@ namespace BMTLab.StateResults;
 public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
     where T : notnull
 {
+    private const bool DefaultStateMarker = true;
+
+
     /// <summary>
     ///     Initializes the result object with a certain state.
     /// </summary>
     /// <param name="value">Arbitrary result object.</param>
     /// <param name="isSuccess">Marks that the type contains a successful state.</param>
     /// <exception cref="ArgumentNullException"><paramref name="value" /> is <c>null</c>.</exception>
-    public Result(in T value, bool isSuccess = true)
+    public Result(in T value, bool isSuccess = DefaultStateMarker)
     {
         ThrowIfNull(value);
 
@@ -44,7 +46,7 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
 
     /// <inheritdoc />
     [DefaultValue(true)]
-    public bool IsSuccess { get; init; } = true;
+    public bool IsSuccess { get; init; } = DefaultStateMarker;
 
 
     /// <inheritdoc />
@@ -57,8 +59,9 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
 
     #region Operators
     /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
+    [SuppressMessage("ReSharper", "RedundantArgumentDefaultValue")]
     public static implicit operator Result<T>(in T value) =>
-        new(GetValueOrThrowInvalidCastExceptionIfNull(value), TryPredictIfSuccessType());
+        new(GetValueOrThrowInvalidCastExceptionIfNull(value), DefaultStateMarker);
 
     /// <exception cref="InvalidCastException">if Value is <c>null</c>.</exception>
     public static implicit operator Result<T>(in (T Value, bool IsSuccess) tuple) =>
@@ -93,9 +96,4 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
     [Pure]
     public override int GetHashCode() =>
         HashCode.Combine(IsSuccess.GetHashCode(), Value);
-
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool TryPredictIfSuccessType() =>
-        !typeof(T).IsAssignableTo(typeof(IErrorStateMarker));
 }

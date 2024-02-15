@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{2902D3
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 		.editorconfig = .editorconfig
 		.config\watchers.xml = .config\watchers.xml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{820D1787-2357-4A04-9D2B-C8A243358D07}"
@@ -31,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{7EB6
 	ProjectSection(SolutionItems) = preProject
 		scripts\clean.sh = scripts\clean.sh
 		scripts\clean.ps1 = scripts\clean.ps1
+		scripts\rewrite-pkg-version.sh = scripts\rewrite-pkg-version.sh
+		scripts\check-nuget-pkg-indexed.sh = scripts\check-nuget-pkg-indexed.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{9A2C20AD-F908-46D6-A34D-6481D7A6791E}"
@@ -56,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "src\Samples\Samp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{38D58662-03FD-408A-A7E2-6AABEB689E3C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateResults.Generator", "src\StateResults.Generator\StateResults.Generator.csproj", "{D015C734-B408-4291-8B27-FAB51DDE736B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +83,10 @@ Global
 		{34128E1F-D9C0-469F-B418-960C0A122A69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34128E1F-D9C0-469F-B418-960C0A122A69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34128E1F-D9C0-469F-B418-960C0A122A69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D015C734-B408-4291-8B27-FAB51DDE736B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D015C734-B408-4291-8B27-FAB51DDE736B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D015C734-B408-4291-8B27-FAB51DDE736B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D015C734-B408-4291-8B27-FAB51DDE736B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{83470426-D91F-4A67-9DE6-82AAB13AEA1B} = {820D1787-2357-4A04-9D2B-C8A243358D07}
@@ -88,5 +97,6 @@ Global
 		{CA75B23E-57B8-428A-990D-21E3BD0B2913} = {820D1787-2357-4A04-9D2B-C8A243358D07}
 		{38D58662-03FD-408A-A7E2-6AABEB689E3C} = {820D1787-2357-4A04-9D2B-C8A243358D07}
 		{34128E1F-D9C0-469F-B418-960C0A122A69} = {38D58662-03FD-408A-A7E2-6AABEB689E3C}
+		{D015C734-B408-4291-8B27-FAB51DDE736B} = {820D1787-2357-4A04-9D2B-C8A243358D07}
 	EndGlobalSection
 EndGlobal

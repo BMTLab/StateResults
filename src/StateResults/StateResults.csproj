@@ -1,5 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <WarningLevel>3</WarningLevel>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
     <PropertyGroup Label="AssemblyInfo">
         <Name>StateResults</Name>
         <Product>$(Name)</Product>
@@ -30,26 +36,12 @@
             <LastGenOutput>Results.g.cs</LastGenOutput>
             <DependentUpon>Results.g.tt</DependentUpon>
         </Compile>
-        <Compile Update="States\StateMarkers.g.cs">
-            <AutoGen>True</AutoGen>
-            <DesignTime>True</DesignTime>
-            <Generator>TextTemplatingFileGenerator</Generator>
-            <LastGenOutput>StateMarkers.g.cs</LastGenOutput>
-            <DependentUpon>StateMarkers.g.tt</DependentUpon>
-        </Compile>
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="States\StateMarkers.csv">
-            <DependentUpon>StateMarkers.g.tt</DependentUpon>
-        </None>
         <None Update="Results.g.tt">
             <Generator>TextTemplatingFileGenerator</Generator>
             <LastGenOutput>Results.g.cs</LastGenOutput>
-        </None>
-        <None Update="States\StateMarkers.g.tt">
-            <Generator>TextTemplatingFileGenerator</Generator>
-            <LastGenOutput>StateMarkers.g.cs</LastGenOutput>
         </None>
     </ItemGroup>
 

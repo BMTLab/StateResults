@@ -6,17 +6,16 @@
     </PropertyGroup>
 
     <PropertyGroup Label="Version">
-        <Major>2</Major>
-        <Minor>3</Minor>
+        <Major>3</Major>
+        <Minor>0</Minor>
         <Build>$(CurrentDate)</Build>
         <Revision>$(CurrentTime)</Revision>
-        <PreReleaseLabel>beta</PreReleaseLabel>
-        <IsPreview>false</IsPreview>
+        <PreReleaseLabel>preview</PreReleaseLabel>
+        <IsPreview>true</IsPreview>
     </PropertyGroup>
 
     <PropertyGroup Label="AssemblyInfo">
         <Deterministic>true</Deterministic>
-        <RootNamespace>$(Company).$(Name)</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
@@ -25,6 +24,7 @@
         <Copyright>Copyright © $([System.DateTime]::Now.Date.Year)</Copyright>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/$(Company)/StateResults</RepositoryUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
@@ -34,7 +34,7 @@
     <PropertyGroup Condition="'$(IsPreview)'=='true'">
         <VersionPrefix>$(Major).$(Minor).$(Build).$(Revision)</VersionPrefix>
         <VersionSuffix>$(PreReleaseLabel)</VersionSuffix>
-        <PackageVersion>$(VersionPrefix).$(VersionSuffix)</PackageVersion>
+        <PackageVersion>$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(IsPreview)'!='true'">
@@ -43,13 +43,14 @@
     </PropertyGroup>
 
     <PropertyGroup Label="Framework">
-        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>$(Company).$(Name).$(AssemblyName)</RootNamespace>
 
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <AnalysisLevel>preview</AnalysisLevel>
 
         <Platforms>AnyCPU</Platforms>
 
@@ -64,16 +65,11 @@
         <Configurations>Debug;Release</Configurations>
         <PackageReleaseNotes Condition="'$(Configuration)'=='Debug'">Debug</PackageReleaseNotes>
         <PackageReleaseNotes Condition="'$(Configuration)'=='Release'">Release</PackageReleaseNotes>
-
-        <SelfContained>false</SelfContained>
     </PropertyGroup>
 
     <PropertyGroup>
         <ArtifactsPath>$(MSBuildThisFileDirectory)out</ArtifactsPath>
         <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
-
-        <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Debug'">

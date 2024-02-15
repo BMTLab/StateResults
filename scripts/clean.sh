@@ -1,8 +1,10 @@
 #!/bin/bash
 # This script cleans specified directories and files in a project.
 
-# Print start message.
-echo "Cleaning projects"
+# Do not forget
+# chmod +x transform_location.sh
+
+echo 'Cleaning projects..'
 
 # Function to clean specified directories.
 clean_directories() {
@@ -16,14 +18,10 @@ clean_files() {
   find .. -name "$pattern" -type f -print0 | xargs -r0 rm
 }
 
-# Clean directories: build, bin, obj, and out.
-clean_directories "build*"
-clean_directories "bin"
-clean_directories "obj"
-clean_directories "out"
+clean_directories 'build*'
+clean_directories 'bin'
+clean_directories 'obj'
+clean_directories 'out'
+clean_files 'VERSION.g.txt'
 
-# Clean VERSION.g.txt files.
-clean_files "VERSION.g.txt"
-
-# Print completion message.
-echo "Cleaning completed"
+echo 'Success. Cleaning completed'

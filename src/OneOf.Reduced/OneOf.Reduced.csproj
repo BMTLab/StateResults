@@ -1,5 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+   <PropertyGroup>
+       <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+       <WarningLevel>3</WarningLevel>
+       <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+   </PropertyGroup>
+
     <PropertyGroup Label="AssemblyInfo">
         <Name>OneOf.Reduced</Name>
         <Product>$(Name)</Product>

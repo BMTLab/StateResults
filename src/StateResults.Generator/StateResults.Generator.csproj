@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>preview</LangVersion>
+        <WarningLevel>3</WarningLevel>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup Label="AssemlyInfo">
+        <Name>StateResult.Generator</Name>
+        <Product>$(Name)</Product>
+        <Title>$(Company).$(Product)</Title>
+        <Description>
+            Source code generator for creating state marker types based on a custom simple CSV file
+        </Description>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Package">
+        <PackageId>$(Company).$(Product)</PackageId>
+        <PackageDescription>$(Description)</PackageDescription>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Generator">
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
+        <IncludeBuildOutput>false</IncludeBuildOutput> <!-- Do not include the generator as a lib dependency -->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Package the generator in the analyzer directory of the nuget package -->
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
+        <PackageReference Remove="Microsoft.CodeAnalysis.CSharp.Workspaces"/>
+    </ItemGroup>
+
+</Project>
