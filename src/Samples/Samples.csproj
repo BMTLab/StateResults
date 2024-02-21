@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <OutputType>Exe</OutputType>
+        <LangVersion>10</LangVersion>
+        <IsPackable>false</IsPackable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <WarningLevel>0</WarningLevel>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(Configuration)'=='Release'">
+        <PackageReference Include="BMTLab.OneOf.Reduced"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)'=='Debug'">
+        <ProjectReference Include="..\OneOf.Reduced\OneOf.Reduced.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="StateMarkers.csv"/>
+        <AdditionalFiles Include="StateMarkers.csv">
+            <DependentUpon>CustomStates.cs</DependentUpon>
+        </AdditionalFiles>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\StateResults\StateResults.csproj"/>
+        <ProjectReference Include="..\StateResults.Generator\StateResults.Generator.csproj" OutputItemType="Analyzer"/>
+    </ItemGroup>
+    
+    <ItemGroup Condition="'$(Configuration)'=='Release'">
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <WarningLevel>3</WarningLevel>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup Label="AssemblyInfo">
+        <Name>StateResults</Name>
+        <Product>$(Name)</Product>
+        <Title>$(Company).$(Product)</Title>
+        <Description>
+            Contains union-types representing either a successful result or a union-list of possible errors
+        </Description>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Package">
+        <PackageId>$(Company).$(Product)</PackageId>
+        <PackageDescription>$(Description)</PackageDescription>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(Configuration)'=='Release'">
+        <PackageReference Include="BMTLab.OneOf.Reduced"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)'=='Debug'">
+        <ProjectReference Include="..\OneOf.Reduced\OneOf.Reduced.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Results.g.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Results.g.cs</LastGenOutput>
+            <DependentUpon>Results.g.tt</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Results.g.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Results.g.cs</LastGenOutput>
+        </None>
+    </ItemGroup>
+
+</Project>
