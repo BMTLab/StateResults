@@ -1,4 +1,4 @@
-﻿namespace BMTLab.OneOf.Reduced.Utils;
+﻿namespace BMTLab.StateResults.Utils;
 
 [DebuggerStepThrough]
 [StackTraceHidden]
