@@ -183,7 +183,7 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
                          ///     Initializes a new instance of the <see cref="{name}" /> struct.
                          /// </summary>
                          /// <param name="message">Optional descriptive message.</param>
-                         public {name}(string? message) : this() =>
+                         public {name}(global::System.String? message) : this() =>
                              Message = message;
 
                  """);
@@ -196,7 +196,7 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
                           /// </summary>
                           /// <param name="message">Optional descriptive message.</param>
                           /// <param name="exception">Optional aggregated exception.</param>
-                          public {{name}}(string? message = null, global::System.Exception? exception = null) : this()
+                          public {{name}}(global::System.String? message = null, global::System.Exception? exception = null) : this()
                           {
                               Message = message;
                               Exception = exception;
@@ -209,7 +209,7 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
             """
             
                     /// <inheritdoc />
-                    public string? Message { get; } = null;
+                    public global::System.String? Message { get; } = null;
 
             """);
 
