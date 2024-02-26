@@ -33,5 +33,9 @@
     
     <ItemGroup Condition="'$(Configuration)'=='Release'">
     </ItemGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="System.Collections.Immutable" />
+    </ItemGroup>
 
 </Project>

@@ -11,7 +11,6 @@ namespace BMTLab.StateResults;
 /// <typeparam name="T">Type of result (successful or not).</typeparam>
 [PublicAPI]
 [DebuggerStepThrough]
-[ExcludeFromCodeCoverage]
 public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
     where T : notnull
 {
@@ -40,12 +39,12 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
 
 
     /// <inheritdoc />
-    [DefaultValue(false)]
+    [DefaultValue(!DefaultStateMarker)]
     public bool IsError => !IsSuccess;
 
 
     /// <inheritdoc />
-    [DefaultValue(true)]
+    [DefaultValue(DefaultStateMarker)]
     public bool IsSuccess { get; init; } = DefaultStateMarker;
 
 
@@ -54,6 +53,8 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
 
 
     /// <inheritdoc />
+    /// <value>0</value>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public int Index => 0;
 
 

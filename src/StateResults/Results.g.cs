@@ -19,7 +19,6 @@ namespace BMTLab.StateResults;
 /// <typeparam name="TE1">Type of possible unsuccessful result.</typeparam>
 [PublicAPI]
 [DebuggerStepThrough]
-[ExcludeFromCodeCoverage]
 public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TE0: notnull
@@ -305,7 +304,6 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
 /// <typeparam name="TE2">Type of possible unsuccessful result.</typeparam>
 [PublicAPI]
 [DebuggerStepThrough]
-[ExcludeFromCodeCoverage]
 public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TE0: notnull
@@ -605,7 +603,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
 /// <typeparam name="TE3">Type of possible unsuccessful result.</typeparam>
 [PublicAPI]
 [DebuggerStepThrough]
-[ExcludeFromCodeCoverage]
 public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TE0: notnull
@@ -919,7 +916,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
 /// <typeparam name="TE4">Type of possible unsuccessful result.</typeparam>
 [PublicAPI]
 [DebuggerStepThrough]
-[ExcludeFromCodeCoverage]
 public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TE0: notnull
@@ -1247,7 +1243,6 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
 /// <typeparam name="TE5">Type of possible unsuccessful result.</typeparam>
 [PublicAPI]
 [DebuggerStepThrough]
-[ExcludeFromCodeCoverage]
 public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TE0: notnull

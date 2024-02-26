@@ -32,8 +32,8 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
                    .CreateSyntaxProvider(
                         static (node, _) => node is ClassDeclarationSyntax { AttributeLists.Count: > 0 },
                         static (context, _) => GetClassAndAttributeInfo(context))
-                   .Where(info => info != default)
-                   .Select((info, _) => info);
+                   .Where(static info => info != default)
+                   .Select(static (info, _) => info);
 
         // Combines the information from class declarations and csv files for processing
         var allCsvFiles = context.AdditionalTextsProvider.Where(static file => file.Path.EndsWith(CsvExtension, OrdinalIgnoreCase));
@@ -69,7 +69,7 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
         var classDeclaration = (ClassDeclarationSyntax) context.Node;
         var attributeData = context.SemanticModel // Extracts the filename specified in the attribute
            .GetDeclaredSymbol(classDeclaration)?.GetAttributes()
-           .FirstOrDefault(ad => ad.AttributeClass!.ToDisplayString() == typeof(StateMarkersGeneratorAttribute).FullName);
+           .FirstOrDefault(static ad => ad.AttributeClass!.ToDisplayString() == typeof(StateMarkersGeneratorAttribute).FullName);
 
         if (attributeData is null)
             return default;
@@ -128,6 +128,9 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
 
               namespace {{namespaceName}}
               {
+                  /// <summary>
+                  ///     Contains generated and other state types used as result markers in type unions.
+                  /// </summary>
                   public static partial class {{rootClassName}}
                   {
               """
@@ -239,6 +242,7 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
     /// </summary>
     /// <param name="syntax">The syntax node to extract the namespace from.</param>
     /// <returns>The namespace as a string.</returns>
+    [Pure]
     private static string GetNamespace(SyntaxNode syntax)
     {
         // If we don't have a namespace at all we'll return an empty string
@@ -284,6 +288,7 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
     /// </summary>
     /// <param name="line">The line to check.</param>
     /// <returns>True if the line is a header or empty; otherwise, false.</returns>
+    [Pure]
     [SuppressMessage("Performance", "CA1862:Use the \'StringComparison\' method overloads to perform case-insensitive string comparisons")]
     [SuppressMessage("Globalization", "CA1307:Specify StringComparison for clarity")]
     private static bool IsHeaderOrEmpty(string line) =>
@@ -295,6 +300,7 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
     /// </summary>
     /// <param name="name">The name to normalize.</param>
     /// <returns>The normalized class name.</returns>
+    [Pure]
     private static string NormalizeClassName(string name)
     {
         // Example of simple normalization

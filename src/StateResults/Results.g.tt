@@ -40,7 +40,6 @@ namespace BMTLab.StateResults;
 #>
 [PublicAPI]
 [DebuggerStepThrough]
-[ExcludeFromCodeCoverage]
 public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
 <#
