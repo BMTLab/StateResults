@@ -11,7 +11,6 @@ namespace BMTLab.StateResults;
 /// <typeparam name="TError">Type of possible unsuccessful result.</typeparam>
 [PublicAPI]
 [DebuggerStepThrough]
-[ExcludeFromCodeCoverage]
 public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrErrorResult
     where TSuccess: notnull
     where TError: notnull
