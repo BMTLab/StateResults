@@ -91,6 +91,8 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
 
 
     public static bool operator true(in Results<TSuccess, TError> result) => result.IsSuccess;
+
+    [ExcludeFromCodeCoverage]
     public static bool operator false(in Results<TSuccess, TError> result) => result.IsError;
     #endregion _Operators
 
