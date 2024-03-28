@@ -97,12 +97,17 @@ public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf,
     public object Value => _index switch
     {
         0 when Success is not null => Success,
-        1 when Error is not null   => Error,
+        1 when Error is not null   => Error.Value,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
     /// <inheritdoc />
-    public int Index => _index;
+    public int Index => _index switch
+    {
+        0 when Success is not null => 0,
+        1 when Error is not null   => Error.Index + 1,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
 
     /// <inheritdoc />
     public bool IsError => !IsSuccess;
@@ -149,6 +154,8 @@ public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf,
 #>
 
     public static bool operator true(in Results<TSuccess, <#= errorTypesText #>> result) => result.IsSuccess;
+
+    [ExcludeFromCodeCoverage]
     public static bool operator false(in Results<TSuccess, <#= errorTypesText #>> result) => result.IsError;
     #endregion _Operators
 
