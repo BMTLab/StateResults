@@ -1,16 +1,34 @@
 #!/bin/bash
-# This script updates the version of a specified NuGet package in Directory.Packages.props or .csproj file.
 
-# Do not forget
+# Author: Nikita Neverov (BMTLab)
+# Version: 1.1.0
+
+# Description: This script updates the version of a specified NuGet package in Directory.Packages.props or .csproj file.
+# Used in CI/CD to automatically install a version of package dependencies by a new version of the package.
+
+# Usage:
 # chmod +x rewrite-pkg-version.sh
+# ./rewrite-pkg-version.sh [-f <file>] [-p <package>] -v <version>
 
 set -uo pipefail
 IFS=$'\n\t'
 
+# Default file and package name
 readonly DEFAULT_PROPS_FILE='Directory.Packages.props'
 readonly DEFAULT_PACKAGE_NAME='BMTLab.OneOf.Reduced'
 
+# Error codes
+readonly ERR_INVALID_OPTION=2
+readonly ERR_MISSING_ARGUMENT=3
+readonly ERR_VERSION_REQUIRED=4
+readonly ERR_FILE_NOT_FOUND=5
+readonly ERR_UPDATE_FAILED=6
+
+#######################################
 # Display usage information.
+# Outputs:
+#   Help information.
+#######################################
 function usage() {
   cat << EOF
 Usage: $(basename "$0") [-f] <file> [-p] <package> -v <version>
@@ -26,16 +44,29 @@ Example:
 EOF
 }
 
-# Displays an error message, outputs usage and terminates the script with an error.
-function error() {
-  local error_message="$1"
+#######################################
+# Displays an error message, outputs usage, and terminates the script with an error.
+# Arguments:
+#   1: The error message to display.
+#   2: The error exit code (1 by default).
+#######################################
+function __error() {
+  local -r message="$1"
+  local -r code="${2:-1}" # Default error code is 1
 
-  printf 'Error: %s.\n' "$error_message" >&2
+  printf 'Error: %s.\n' "$message" >&2
   usage
-  exit 1
+  exit "$code"
 }
 
+#######################################
 # Parse command line options.
+# Globals:
+#   DEFAULT_PROPS_FILE
+#   DEFAULT_PACKAGE_NAME
+# Arguments:
+#   References to file, package, and version variables.
+#######################################
 function __parse_options() {
   local -n _file="$1"
   local -n _package="$2"
@@ -47,21 +78,12 @@ function __parse_options() {
   while getopts ':f:p:v:h' opt; do
     case $opt in
       f)
-        if [[ -z $OPTARG || $OPTARG =~ ^- ]]; then
-          error 'Option -f requires a file path'
-        fi
         _file="$OPTARG"
         ;;
       p)
-        if [[ -z $OPTARG || $OPTARG =~ ^- ]]; then
-          error 'Option -p requires a package name'
-        fi
         _package="$OPTARG"
         ;;
       v)
-        if [[ -z $OPTARG || $OPTARG =~ ^- ]]; then
-          error 'Option -v requires a version'
-        fi
         _version="$OPTARG"
         ;;
       h)
@@ -69,41 +91,54 @@ function __parse_options() {
         exit 0
         ;;
       \?)
-        error "Invalid option: -${OPTARG}."
+        __error "Invalid option: -${OPTARG}" $ERR_INVALID_OPTION
         ;;
       :)
-        error "Option -$OPTARG requires an argument"
+        __error "Option -$OPTARG requires an argument" $ERR_MISSING_ARGUMENT
         ;;
     esac
   done
 }
 
+#######################################
 # Validate required parameters.
+# Arguments:
+#   1: The file to update.
+#   2: The new version to set.
+#######################################
 function __validate_parameters() {
-  local file="$1"
-  local version="$2"
+  local -r file="$1"
+  local -r version="$2"
 
-  [[ -z "$version" ]] && error 'Version (-v) is required'
-  [[ ! -f "$file" ]] && error "File '${file}' does not exist"
+  [[ -z "$version" ]] && __error 'Version (-v) is required' $ERR_VERSION_REQUIRED
+  [[ ! -f "$file" ]] && __error "File '${file}' does not exist" $ERR_FILE_NOT_FOUND
 }
 
-# Update the package version in the props file.
+#######################################
+# Update the package version in the props file or .csproj file.
+# Arguments:
+#   1: The file to update.
+#   2: The package name whose version will be updated.
+#   3: The new version to set.
+#######################################
 function _update_version() {
-  local file="$1"
-  local package="$2"
-  local version="$3"
+  local -r file="$1"
+  local -r package="$2"
+  local -r version="$3"
 
-  # Works for both "Update=..." and "Include=..."
   sed -i "s/\(e=\"${package}\" Version=\"\)[^\"]*/\1${version}/" "$file"
 
   if [[ $? -eq 0 ]]; then
     echo "Updated $package to version $version in '${file}'."
   else
-    error "Failed to update version in '${file}'"
+    __error "Failed to update version in '${file}'" $ERR_UPDATE_FAILED
   fi
 }
 
+#######################################
 # Main function to orchestrate script execution.
+# Uses global defaults and user inputs to update NuGet package versions.
+#######################################
 function main() {
   local file="$DEFAULT_PROPS_FILE"
   local package="$DEFAULT_PACKAGE_NAME"
