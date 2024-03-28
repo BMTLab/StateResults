@@ -1,5 +1,5 @@
 # BMTLab.StateResults 
-[![NuGet](https://img.shields.io/nuget/v/OneOf?logo=nuget)](https://www.nuget.org/packages/BMTLab.StateResults)
+[![NuGet](https://img.shields.io/nuget/v/BMTLab.StateResults?logo=nuget)](https://www.nuget.org/packages/BMTLab.StateResults)
 ![Nuget Downloads](https://img.shields.io/nuget/dt/BMTLab.StateResults)
 ![.NET](https://github.com/BMTLab/StateResults/workflows/publish/badge.svg)
 
