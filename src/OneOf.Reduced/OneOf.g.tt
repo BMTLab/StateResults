@@ -68,7 +68,7 @@ public class OneOf<<#= typesText #>> : IOneOf, IEquatable<OneOf<<#= typesText #>
 #>
     )
     {
-        Debug.Assert(index < 0, CorruptedMessage);
+        Debug.Assert(index >= 0, CorruptedMessage);
 
         Index = index;
 <#

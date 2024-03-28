@@ -29,7 +29,7 @@ public class OneOf<T0, T1> : IOneOf, IEquatable<OneOf<T0, T1>>
         in T1? value1 = default
     )
     {
-        Debug.Assert(index < 0, CorruptedMessage);
+        Debug.Assert(index >= 0, CorruptedMessage);
 
         Index = index;
         _value0 = value0;
@@ -292,7 +292,7 @@ public class OneOf<T0, T1, T2> : IOneOf, IEquatable<OneOf<T0, T1, T2>>
         in T2? value2 = default
     )
     {
-        Debug.Assert(index < 0, CorruptedMessage);
+        Debug.Assert(index >= 0, CorruptedMessage);
 
         Index = index;
         _value0 = value0;
@@ -604,7 +604,7 @@ public class OneOf<T0, T1, T2, T3> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3>>
         in T3? value3 = default
     )
     {
-        Debug.Assert(index < 0, CorruptedMessage);
+        Debug.Assert(index >= 0, CorruptedMessage);
 
         Index = index;
         _value0 = value0;
@@ -965,7 +965,7 @@ public class OneOf<T0, T1, T2, T3, T4> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3
         in T4? value4 = default
     )
     {
-        Debug.Assert(index < 0, CorruptedMessage);
+        Debug.Assert(index >= 0, CorruptedMessage);
 
         Index = index;
         _value0 = value0;
@@ -1375,7 +1375,7 @@ public class OneOf<T0, T1, T2, T3, T4, T5> : IOneOf, IEquatable<OneOf<T0, T1, T2
         in T5? value5 = default
     )
     {
-        Debug.Assert(index < 0, CorruptedMessage);
+        Debug.Assert(index >= 0, CorruptedMessage);
 
         Index = index;
         _value0 = value0;

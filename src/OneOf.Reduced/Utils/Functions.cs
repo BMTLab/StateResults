@@ -2,6 +2,7 @@
 
 [DebuggerStepThrough]
 [StackTraceHidden]
+[ExcludeFromCodeCoverage]
 internal static class Functions
 {
     [Pure]

@@ -2,155 +2,179 @@ using BMTLab.OneOf.Reduced;
 
 namespace BMTLab.StateResults.Tests.Units;
 
-public class ResultTests
+public sealed class ResultTests
 {
-    [Fact]
-    public void Result_Should_InitializeWithSuccessValue()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void Result_Should_InitializeWithSuccessValue<T>(T value) where T : notnull
     {
         //// Arrange & Act
-        var result = new Result<string>("success");
+        var result = new Result<T>(value);
 
         //// Assert
-        result.IsSuccess.Should().BeTrue();
-        result.IsError.Should().BeFalse();
-        result.Value.Should().Be("success");
+        result.IsSuccess.Should().BeTrue("a result initialized with a value should be successful");
+        result.IsError.Should().BeFalse("a result initialized with a value should not be an error");
+        result.Value.Should().Be(value, "the value passed during initialization should be accessible");
     }
 
 
-    [Fact]
-    public void Result_Should_InitializeWithErrorValue()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void Result_Should_InitializeWithErrorValue<T>(T value) where T : notnull
     {
         //// Arrange & Act
-        var result = new Result<string>("error", false);
+        var result = new Result<T>(value, false);
 
         //// Assert
-        result.IsSuccess.Should().BeFalse();
-        result.IsError.Should().BeTrue();
-        result.Value.Should().Be("error");
+        result.IsSuccess.Should().BeFalse("a result initialized as an error should not be successful");
+        result.IsError.Should().BeTrue("a result initialized as an error should indicate an error state");
+        result.Value.Should().Be(value, "the error value passed during initialization should be accessible");
     }
 
 
-    [Fact]
-    public void Result_ShouldBeEqual_WhenInitializedWithSameValue()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void Result_ShouldBeEqual_WhenInitializedWithSameValue<T>(T value) where T : notnull
     {
         //// Arrange
-        var result1 = new Result<string>("testValue");
-        var result2 = new Result<string>("testValue");
+        var result1 = new Result<T>(value);
+        var result2 = new Result<T>(value);
 
         //// Act && Assert
-        result1.Should().BeEquivalentTo(result2);
+        result1.Should().Be(result2, "results initialized with the same value should be considered equivalent");
     }
 
 
-    [Fact]
-    public void IOneOfValue_ShouldReturnCorrectValue()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void IOneOfValue_ShouldReturnCorrectValue<T>(T value) where T : notnull
     {
         //// Arrange
-        var testValue = new object();
-        var result = new Result<object>(testValue);
+        var result = new Result<T>(value);
 
         //// Act
         var oneOfValue = ((IOneOf) result).Value;
 
         //// Assert
-        oneOfValue.Should().Be(testValue);
+        oneOfValue.Should().Be(value, "the IOneOf interface should return the same value as the result");
     }
 
 
-    [Fact]
-    public void Index_ShouldAlwaysReturnZero()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void Index_ShouldAlwaysReturnZero<T>(T value) where T : notnull
     {
         //// Arrange
-        var result = new Result<string>("testValue");
+        var result = new Result<T>(value);
 
         //// Act && Assert
-        result.Index.Should().Be(0);
+        result.Index.Should().Be(0, "the index of a Result should always be 0 as it is not a discriminated union");
     }
 
 
-    [Fact]
-    public void ImplicitOperator_Should_SetIsSuccessToDefault()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void ImplicitOperator_Should_SetIsSuccessToDefault<T>(T value) where T : notnull
     {
         //// Arrange & Act
-        Result<string> result = "some value";
+        Result<T> result = value;
 
         //// Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().Be("some value");
+        result.IsSuccess.Should().BeTrue("an implicit conversion from a value should result in a successful Result");
+        result.Value.Should().Be(value, "the implicit conversion should maintain the original value");
     }
 
 
-    [Fact]
-    public void ExplicitOperator_Should_ReturnValue()
+    [Theory]
+    [InlineData("testString", true)]
+    [InlineData("errorString", false)]
+    public void ImplicitOperator_FromTuple_ShouldCorrectlyInitializeResult(string value, bool isSuccess)
+    {
+        //// Arrange & Act
+        Result<string> result = (value, isSuccess);
+
+        //// Assert
+        result.Value.Should().Be(value, "the value should match the input");
+        result.IsSuccess.Should().Be(isSuccess, "the success state should match the input");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void ExplicitOperator_Should_ReturnValue<T>(T value) where T : notnull
     {
         //// Arrange
-        var result = new Result<string>("some value");
+        var result = new Result<T>(value);
 
         //// Act
-        var value = (string) result;
+        var unpacked = (T) result;
 
         //// Assert
-        value.Should().Be("some value");
+        unpacked.Should().Be(value, "an explicit conversion from a Result should return the original value");
     }
 
 
-    [Fact]
-    public void TrueOperator_Should_ReturnTrueIfSuccess()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void TrueOperator_Should_ReturnTrueIfSuccess<T>(T value) where T : notnull
     {
         //// Arrange
-        var result = new Result<string>("some value");
+        var result = new Result<T>(value);
 
         if (result)
             // Assertion inside condition to ensure it's executed.
-            result.IsSuccess.Should().BeTrue();
+            result.IsSuccess.Should().BeTrue("the true operator should indicate success for a successful Result");
         else
             Assert.Fail("Result should be successful");
     }
 
 
-    [Fact]
-    public void FalseOperator_Should_ReturnTrueIfError()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void FalseOperator_Should_ReturnTrueIfError<T>(T value) where T : notnull
     {
         //// Arrange
-        var result = new Result<string>("some value", false);
+        var result = new Result<T>(value, false);
 
         if (result)
             Assert.Fail("Result should be an error");
         else
             // Assertion inside condition to ensure it's executed.
-            result.IsError.Should().BeTrue();
+            result.IsError.Should().BeTrue("the false operator should indicate an error for a Result initialized as an error");
     }
 
 
-    [Fact]
-    public void ToString_Should_ReturnCorrectFormatForSuccess()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void ToString_Should_ReturnCorrectFormatForSuccess<T>(T value) where T : notnull
     {
         //// Arrange
-        var result = new Result<string>("success");
+        var result = new Result<T>(value);
 
         //// Act
         var toString = result.ToString();
 
         //// Assert
         toString.Should()
-                .Contain($"{nameof(Result<string>.IsSuccess)} = True").And
-                .Contain($"{nameof(Result<string>.Value)} = success");
+                .Contain($"{nameof(Result<string>.IsSuccess)} = True", "the ToString output for a successful Result should indicate success")
+                .And.Contain($"{nameof(Result<string>.Value)} = {value}", "the ToString output should include the value for a successful Result");
     }
 
 
-    [Fact]
-    public void ToString_Should_ReturnCorrectFormatForError()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void ToString_Should_ReturnCorrectFormatForError<T>(T value) where T : notnull
     {
         //// Arrange
-        var result = new Result<string>("error", false);
+        var result = new Result<T>(value, false);
 
         //// Act
         var toString = result.ToString();
 
         //// Assert
         toString.Should()
-                .Contain($"{nameof(Result<string>.IsSuccess)} = False").And
-                .Contain($"{nameof(Result<string>.Value)} = error");
+                .Contain($"{nameof(Result<string>.IsSuccess)} = False", "the ToString output for an error Result should indicate it's not successful")
+                .And.Contain($"{nameof(Result<string>.Value)} = {value}", "the ToString output should include the value even for an error Result");
     }
 
 
@@ -162,23 +186,25 @@ public class ResultTests
         var result2 = new Result<string>("value2");
 
         //// Act
-        var hashCode1 = result1.ToString();
-        var hashCode2 = result2.ToString();
+        var hashCode1 = result1.GetHashCode();
+        var hashCode2 = result2.GetHashCode();
 
         //// Assert
-        hashCode1.Should().NotBe(hashCode2);
+        hashCode1.Should().NotBe(hashCode2, "different Results should have different hash codes");
     }
 
 
-     #pragma warning disable CA1806
     [Fact]
-    public void Result_ShouldThrow_ArgumentNullException_WhenValueIsValue()
+    [SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
+    [SuppressMessage("Performance", "CA1806:Do not ignore method results")]
+    public void Result_ShouldThrow_ArgumentNullException_WhenValueIsNull()
     {
         //// Arrange
-        Action act = () => new Result<string>(null!);
+        var successAction = () => new Result<string>(null!);
+        var errorAction = () => new Result<string>(null!, isSuccess: false);
 
         //// Act && Assert
-        act.Should().ThrowExactly<ArgumentNullException>();
+        successAction.Should().ThrowExactly<ArgumentNullException>("initializing a Result with a null value should throw an ArgumentNullException");
+        errorAction.Should().ThrowExactly<ArgumentNullException>("initializing a Result with a null value should throw an ArgumentNullException");
     }
-     #pragma warning restore CA1806
 }

@@ -1,155 +1,400 @@
 namespace BMTLab.StateResults.Tests.Units;
 
-public class ResultsTests
+public sealed class Results2Tests
 {
-    [Fact]
-    public void Results_InitializedWithSuccess_ShouldIndicateSuccess()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void Results_InitializedWithSuccess_ShouldIndicateSuccess<T>(T value) where T : notnull
     {
         //// Arrange & Act
-        var result = new Results<string, Exception>("success");
+        var result = new Results<T, Exception>(value);
 
         //// Assert
-        result.IsSuccess.Should().BeTrue();
-        result.IsError.Should().BeFalse();
-        result.Success.Should().Be("success");
-        result.Error.Should().BeNull();
-        result.Index.Should().Be(0);
+        result.IsSuccess.Should().BeTrue("the result was initialized with a success value");
+        result.IsError.Should().BeFalse("the result was initialized with a success value, not an error");
+        result.Success.Should().Be(value, "a success value was provided during initialization");
+        result.Error.Should().BeNull("no error value was provided during initialization");
+        result.Index.Should().Be(0, "success value should have an index of 0");
     }
 
 
-    [Fact]
-    public void Results_InitializedWithError_ShouldIndicateError()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void Results_InitializedWithError_ShouldIndicateError<T>(T value) where T : notnull
     {
         //// Arrange & Act
-        var exception = new ArgumentException("error");
-        var result = new Results<string, Exception>(exception);
+        var result = new Results<Exception, T>(value);
 
         //// Assert
-        result.IsSuccess.Should().BeFalse();
-        result.IsError.Should().BeTrue();
-        result.Error.Should().Be(exception);
-        result.Success.Should().BeNull();
+        result.IsSuccess.Should().BeFalse("the result was initialized with an error value");
+        result.IsError.Should().BeTrue("the result was initialized with an error value");
+        result.Error.Should().Be(value, "an error value was provided during initialization");
+        result.Success.Should().BeNull("no success value was provided during initialization");
+        result.Index.Should().Be(1, "error value should have an index of 1");
     }
 
 
-    [Fact]
-    public void IOneOfValue_ShouldReturnCorrectValue_ForSuccess()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void IOneOfValue_ShouldReturnCorrectValue_ForSuccess<T>(T value) where T : notnull
     {
-        //// Arrange
-        const int successValue = 42;
-        var result = new Results<int, string>(successValue);
+        //// Arrange & Act
+        var result = new Results<T, SomeClassError>(value);
 
-        //// Act && Assert
-        result.Value.Should().Be(successValue);
-        result.Index.Should().Be(0);
+        //// Assert
+        result.Value.Should().Be(value, "the result was initialized with this success value");
+        result.Index.Should().Be(0, "success values should have an index of 0");
     }
 
 
-    [Fact]
-    public void IOneOfValue_ShouldReturnCorrectValue_ForError()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void IOneOfValue_ShouldReturnCorrectValue_ForError<T>(T value) where T : notnull
     {
-        //// Arrange
-        const string errorValue = "Error!";
-        var result = new Results<int, string>(errorValue);
+        //// Arrange & Act
+        var result = new Results<SomeStructType, T>(value);
 
-        //// Act && Assert
-        result.Value.Should().Be(errorValue);
-        result.Index.Should().Be(1);
+        //// Assert
+        result.Value.Should().Be(value, "the result was initialized with this error value");
+        result.Index.Should().Be(1, "error values should have an index of 1");
     }
 
 
-    [Fact]
-    public void Match_ShouldExecuteSuccessFunction_WhenSuccess()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void Match_ShouldExecuteSuccesFunction_WhenSuccess<T>(T value) where T : notnull
     {
         //// Arrange
-        var result = new Results<string, object>("Success");
+        var result = new Results<T, SomeClassError>(value);
 
-        //// Act & Assert
-        result.Match(
-            success =>
+        //// Act
+        var matchResult = result.Match
+        (
+            success => $"Success: {success}",
+            error => $"Error: {error}"
+        );
+
+        //// Assert
+        matchResult.Should().Be($"Success: {value}", "the result was initialized with a success value");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void Match_ShouldExecuteErrorFunction_WhenError<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<SomeStructType, T>(value);
+
+        //// Act
+        var matchResult = result.Match
+        (
+            success => $"Success: {success}",
+            error => $"Error: {error}"
+        );
+
+        //// Assert
+        matchResult.Should().Be($"Error: {value}", "the result was initialized with an error value");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public async Task MatchAsync_ShouldExecuteSuccessFunction_WhenSuccess<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<T, SomeClassError>(value);
+
+        //// Act
+        var matchResult = await result.MatchAsync
+        (
+            success => Task.FromResult($"Success: {success}"),
+            error => Task.FromResult($"Error: {error}")
+        );
+
+        //// Assert
+        matchResult.Should().Be($"Success: {value}", "the result was initialized with a success value");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public async Task MatchAsync_ShouldExecuteErrorFunction_WhenError<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<SomeStructType, T>(value);
+
+        //// Act
+        var matchResult = await result.MatchAsync
+        (
+            success => Task.FromResult($"Success: {success}"),
+            error => Task.FromResult($"Error: {error}")
+        );
+
+        //// Assert
+        matchResult.Should().Be($"Error: {value}", "the result was initialized with an error value");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void Switch_ShouldExecuteSuccessAction_WhenSuccess<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<T, SomeClassError>(value);
+        var successActionInvoked = false;
+
+        //// Act
+        result.Switch
+        (
+            _ => successActionInvoked = true,
+            _ => Assert.Fail("Expected success, not error.")
+        );
+
+        //// Assert
+        successActionInvoked.Should().BeTrue("the result was initialized with a success value");
+    }
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void Switch_ShouldExecuteErrorAction_WhenError<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<SomeStructType, T>(value);
+        var errorActionInvoked = false;
+
+        //// Act
+        result.Switch
+        (
+            _ => Assert.Fail("Expected error, not success."),
+            _ => errorActionInvoked = true
+        );
+
+        //// Assert
+        errorActionInvoked.Should().BeTrue("the result was initialized with an error value");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public async Task SwitchAsync_ShouldExecuteSuccessFunc_WhenSuccess<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<T, SomeClassError>(value);
+        var successFuncInvoked = false;
+
+        //// Act
+        await result.SwitchAsync
+        (
+            async _ =>
             {
-                success.Should().Be("Success");
-
-                return true;
+                await Task.Yield();; // Simulate async work
+                successFuncInvoked = true;
             },
-            error =>
+            async _ =>
             {
+                await Task.Yield(); // Simulate async work
                 Assert.Fail("Expected success, not error.");
+            }
+        );
 
-                return false;
-            });
+        //// Assert
+        successFuncInvoked.Should().BeTrue("the result was initialized with a success value");
     }
 
 
-    [Fact]
-    public void Match_ShouldExecuteErrorFunction_WhenError()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public async Task SwitchAsync_ShouldExecuteErrorFunc_WhenError<T>(T value) where T : notnull
     {
         //// Arrange
-        var result = new Results<object, string>("Error");
+        var result = new Results<SomeStructType, T>(value);
+        var errorFuncInvoked = false;
 
-        //// Act & Assert
-        result.Match(
-            success =>
+        //// Act
+        await result.SwitchAsync
+        (
+            async _ =>
             {
+                await Task.Yield(); // Simulate async work
                 Assert.Fail("Expected error, not success.");
-
-                return true;
             },
-            error =>
+            async _ =>
             {
-                error.Should().Be("Error");
+                await Task.Yield(); // Simulate async work
+                errorFuncInvoked = true;
+            }
+        );
 
-                return false;
-            });
+        //// Assert
+        errorFuncInvoked.Should().BeTrue("the result was initialized with an error value");
     }
 
 
-    [Fact]
-    public void ImplicitConversion_FromSuccessValue_ShouldResultInSuccess()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void ImplicitConversion_FromSuccessValue_ShouldResultInSuccess<T>(T value) where T : notnull
     {
         //// Arrange & Act
-        Results<string, byte> result = "Success";
+        Results<T, SomeClassError> results2 = value;
 
         //// Assert
-        result.IsSuccess.Should().BeTrue();
+        results2.IsSuccess.Should().BeTrue("an implicit conversion from a success value should result in a successful result");
     }
 
 
-    [Fact]
-    public void ImplicitConversion_FromErrorValue_ShouldResultInError()
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void ImplicitConversion_FromErrorValue_ShouldResultInError<T>(T value) where T : notnull
     {
         //// Arrange & Act
-        Results<byte, string> result = "Error";
+        Results<SomeStructType, T> results2 = value;
 
         //// Assert
-        result.IsError.Should().BeTrue();
+        results2.IsError.Should().BeTrue("an implicit conversion from an error value should result in an error result");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void ExplicitConversion_ToSuccessValue_ShouldReturnCorrectValue_WhenSuccess<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<T, SomeClassError>(value);
+
+        //// Act
+        var success = (T) result;
+
+        //// Assert
+        success.Should().Be(value, "explicit conversion to a success value should return the correct success value");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void ExplicitConversion_ToErrorValue_ShouldReturnCorrectValue_WhenError<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<SomeStructType, T>(value);
+
+        //// Act
+        var error = (T) result;
+
+        //// Assert
+        error.Should().Be(value, "explicit conversion to an error value should return the correct error value");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void TrueOperator_ShouldReturnTrue_IfSuccess<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<T, SomeClassError>(value);
+
+        if (result)
+            // Assertion inside condition to ensure it's executed.
+            result.IsSuccess.Should().BeTrue("the true operator should indicate success for a successful Result");
+        else
+            Assert.Fail("Result should be successful");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void FalseOperator_ShouldReturnTrue_IfError<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<SomeStructType, T>(value);
+
+        if (result)
+            Assert.Fail("Result should be an error");
+        else
+            // Assertion inside condition to ensure it's executed.
+            result.IsError.Should().BeTrue("the false operator should indicate an error for a Result initialized as an error");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(TwoTypesClassData))]
+    public void Results_ShouldBeEqual_WhenInitializedWithSameValue<T1, T2>(T1 value1, T2 value2) where T1 : notnull where T2 : notnull
+    {
+        //// Arrange
+        var result11 = new Results<T1, T2>(value1);
+        var result12 = new Results<T1, T2>(value1);
+        var result21 = new Results<T1, T2>(value2);
+        var result22 = new Results<T1, T2>(value2);
+
+        //// Act && Assert
+        result11.Should().Be(result12, "results initialized with the same value should be considered equivalent");
+        result21.Should().Be(result22, "results initialized with the same value should be considered equivalent");
+        result11.Should().NotBe(result21, "results initialized with the different values should be considered not equivalent");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void ToString_Should_ReturnCorrectFormat_WhenSuccess<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<T, SomeClassError>(value);
+
+        //// Act
+        var toString = result.ToString();
+
+        //// Assert
+        toString
+           .Should()
+           .Contain($"{nameof(Results<SomeStructType, SomeClassError>.IsSuccess)} = True", "the ToString output for a successful Result should indicate success")
+           .And.Contain($"{nameof(Results<SomeStructType, SomeClassError>.Value)} = {value}", "the ToString output should include the value for a successful Results");
+    }
+
+
+    [Theory]
+    [ClassData(typeof(OneTypeClassData))]
+    public void ToString_Should_ReturnCorrectFormat_WhenError<T>(T value) where T : notnull
+    {
+        //// Arrange
+        var result = new Results<SomeStructType, T>(value);
+
+        //// Act
+        var toString = result.ToString();
+
+        //// Assert
+        toString
+           .Should()
+           .Contain($"{nameof(Results<SomeStructType, SomeClassError>.IsSuccess)} = False", "the ToString output for an error Result should indicate it's not successful")
+           .And.Contain($"{nameof(Results<SomeStructType, SomeClassError>.Value)} = {value}", "the ToString output should include the value even for an error Results");
     }
 
 
     [Fact]
-    public void ExplicitConversion_ToSuccessValue_WhenSuccess_ShouldReturnCorrectValue()
+    public void GetHashCode_ShouldReturnDifferentValuesForDifferentResults()
     {
         //// Arrange
-        var result = new Results<string, byte>("Success");
+        var result1 = new Results<int, string>(42);
+        var result2 = new Results<int, string>(43);
 
         //// Act
-        var success = (string) result;
+        var hashCode1 = result1.GetHashCode();
+        var hashCode2 = result2.GetHashCode();
 
         //// Assert
-        success.Should().Be("Success");
+        hashCode1.Should().NotBe(hashCode2, "different results should produce different hash codes");
     }
 
 
     [Fact]
-    public void ExplicitConversion_ToErrorValue_WhenError_ShouldReturnCorrectValue()
+    [SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
+    [SuppressMessage("Performance", "CA1806:Do not ignore method results")]
+    public void Results_ShouldThrow_ArgumentNullException_WhenValueIsNull()
     {
         //// Arrange
-        var result = new Results<byte, string>(5);
+        var successAction = () => new Results<string, SomeClassError>((string) null!);
+        var errorAction = () => new Results<string, SomeClassError>((SomeClassError) null!);
 
-        //// Act
-        var error = (byte) result;
-
-        //// Assert
-        error.Should().Be(5);
+        //// Act && Assert
+        successAction.Should().ThrowExactly<ArgumentNullException>("initializing a Results with a null value should throw an ArgumentNullException");
+        errorAction.Should().ThrowExactly<ArgumentNullException>("initializing a Results with a null value should throw an ArgumentNullException");
     }
 }

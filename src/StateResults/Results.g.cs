@@ -70,12 +70,17 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
     public object Value => _index switch
     {
         0 when Success is not null => Success,
-        1 when Error is not null   => Error,
+        1 when Error is not null   => Error.Value,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
     /// <inheritdoc />
-    public int Index => _index;
+    public int Index => _index switch
+    {
+        0 when Success is not null => 0,
+        1 when Error is not null   => Error.Index + 1,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
 
     /// <inheritdoc />
     public bool IsError => !IsSuccess;
@@ -116,6 +121,8 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
 
 
     public static bool operator true(in Results<TSuccess, TE0, TE1> result) => result.IsSuccess;
+
+    [ExcludeFromCodeCoverage]
     public static bool operator false(in Results<TSuccess, TE0, TE1> result) => result.IsError;
     #endregion _Operators
 
@@ -356,12 +363,17 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     public object Value => _index switch
     {
         0 when Success is not null => Success,
-        1 when Error is not null   => Error,
+        1 when Error is not null   => Error.Value,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
     /// <inheritdoc />
-    public int Index => _index;
+    public int Index => _index switch
+    {
+        0 when Success is not null => 0,
+        1 when Error is not null   => Error.Index + 1,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
 
     /// <inheritdoc />
     public bool IsError => !IsSuccess;
@@ -410,6 +422,8 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
 
 
     public static bool operator true(in Results<TSuccess, TE0, TE1, TE2> result) => result.IsSuccess;
+
+    [ExcludeFromCodeCoverage]
     public static bool operator false(in Results<TSuccess, TE0, TE1, TE2> result) => result.IsError;
     #endregion _Operators
 
@@ -656,12 +670,17 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     public object Value => _index switch
     {
         0 when Success is not null => Success,
-        1 when Error is not null   => Error,
+        1 when Error is not null   => Error.Value,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
     /// <inheritdoc />
-    public int Index => _index;
+    public int Index => _index switch
+    {
+        0 when Success is not null => 0,
+        1 when Error is not null   => Error.Index + 1,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
 
     /// <inheritdoc />
     public bool IsError => !IsSuccess;
@@ -718,6 +737,8 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
 
 
     public static bool operator true(in Results<TSuccess, TE0, TE1, TE2, TE3> result) => result.IsSuccess;
+
+    [ExcludeFromCodeCoverage]
     public static bool operator false(in Results<TSuccess, TE0, TE1, TE2, TE3> result) => result.IsError;
     #endregion _Operators
 
@@ -970,12 +991,17 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     public object Value => _index switch
     {
         0 when Success is not null => Success,
-        1 when Error is not null   => Error,
+        1 when Error is not null   => Error.Value,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
     /// <inheritdoc />
-    public int Index => _index;
+    public int Index => _index switch
+    {
+        0 when Success is not null => 0,
+        1 when Error is not null   => Error.Index + 1,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
 
     /// <inheritdoc />
     public bool IsError => !IsSuccess;
@@ -1040,6 +1066,8 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
 
 
     public static bool operator true(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> result) => result.IsSuccess;
+
+    [ExcludeFromCodeCoverage]
     public static bool operator false(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4> result) => result.IsError;
     #endregion _Operators
 
@@ -1298,12 +1326,17 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     public object Value => _index switch
     {
         0 when Success is not null => Success,
-        1 when Error is not null   => Error,
+        1 when Error is not null   => Error.Value,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
     /// <inheritdoc />
-    public int Index => _index;
+    public int Index => _index switch
+    {
+        0 when Success is not null => 0,
+        1 when Error is not null   => Error.Index + 1,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
 
     /// <inheritdoc />
     public bool IsError => !IsSuccess;
@@ -1376,6 +1409,8 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
 
 
     public static bool operator true(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> result) => result.IsSuccess;
+
+    [ExcludeFromCodeCoverage]
     public static bool operator false(in Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> result) => result.IsError;
     #endregion _Operators
 
