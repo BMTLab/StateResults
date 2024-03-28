@@ -52,11 +52,11 @@ EOF
 #######################################
 function __error() {
   local -r message="$1"
-  local -r code="${2:-1}" # Default error code is 1
+  local -ir code=${2:-1} # Default error code is 1
 
   printf 'Error: %s.\n' "$message" >&2
   usage
-  exit "$code"
+  exit $code
 }
 
 #######################################
