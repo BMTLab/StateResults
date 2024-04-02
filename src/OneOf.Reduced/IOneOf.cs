@@ -20,4 +20,14 @@ public interface IOneOf
     /// </summary>
     /// <example>0</example>
     int Index { get; }
+
+    /// <summary>
+    ///     Returns the hash code for this instance based on current state of the union.
+    /// </summary>
+    /// <returns>
+    ///     A 32-bit signed integer that is the hash code for this instance.
+    /// </returns>
+    [Pure]
+    public int GetHashCode() =>
+        HashCode.Combine(Index, Value);
 }

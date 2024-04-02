@@ -297,7 +297,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -602,7 +602,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -921,7 +921,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -1254,7 +1254,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -1601,7 +1601,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 

@@ -78,6 +78,4 @@ Console.WriteLine(result1 == ("Failed message", false)); // >> True
 Console.WriteLine(result1.IsSuccess); // >> False
 Console.WriteLine(result1.IsError); // >> True
 
-Results<CustomStates.Success, CustomStates.Forbidden> t1 = new CustomStates.Success();
-
 

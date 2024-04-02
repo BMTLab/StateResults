@@ -354,7 +354,7 @@ public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf,
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 
