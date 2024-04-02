@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 
 using BMTLab.StateResults.Abstractions;
@@ -21,6 +22,9 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
     private const string CsvExtension = ".csv";
     private const int DefaultStringBuilderCapacity = 8192;
     private static readonly char[] Separator = ['_', '-', ' '];
+    private static readonly Assembly CurrentAssembly = Assembly.GetAssembly(typeof(StateMarkersGenerator));
+    private static readonly string AssemblyName = CurrentAssembly.GetName().Name;
+    private static readonly string AssemblyVersion = CurrentAssembly.GetName().Version.ToString();
 
 
     /// <inheritdoc />
@@ -130,6 +134,7 @@ public sealed class StateMarkersGenerator : IIncrementalGenerator
                   /// <summary>
                   ///     Contains generated and other state types used as result markers in type unions.
                   /// </summary>
+                  [System.CodeDom.Compiler.GeneratedCodeAttribute("{{AssemblyName}}", "{{AssemblyVersion}}")]
                   public static partial class {{rootClassName}}
                   {
               """);
