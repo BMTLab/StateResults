@@ -1,135 +1,157 @@
 #!/bin/bash
-# Checks if a NuGet package is indexed and available on nuget.org.
 
-# Do not forget
+# Author: Nikita Neverov (BMTLab)
+# Version: 2.0.1
+
+# Description: Checks if a NuGet package is indexed and available on nuget.org.
+# Used in CI/CD to automatically check if a dependency package is indexed before pushing a dependent package.
+
+# Usage:
 # chmod +x check-nuget-pkg-indexed.sh
+# ./check-nuget-pkg-indexed.sh [-p] <package> [-a] <attempts> -v <version>
 
 set -uo pipefail
 IFS=$'\n\t'
 
+# Default settings
 readonly DEFAULT_PACKAGE_NAME='BMTLab.OneOf.Reduced'
 readonly DEFAULT_MAX_ATTEMPTS=10
 readonly SLEEP_SECONDS=30
 
+# Error codes
+readonly ERR_MISSING_ARGUMENT=20
+readonly ERR_INVALID_OPTION=30
+readonly ERR_INVALID_VERSION=40
+readonly ERR_PACKAGE_NOT_FOUND=50
+
+#######################################
 # Display usage information.
+# Outputs:
+#   Help information.
+#######################################
 function usage() {
-  cat << EOF
+  cat <<EOF
 Usage: $(basename "$0") [-p] <package> [-a] <attempts> -v <version>
 
 Options:
   -p <package>  : Specify the NuGet package name. Default is '${DEFAULT_PACKAGE_NAME}'.
   -a <attempts> : Specify the max attempts count. Default is ${DEFAULT_MAX_ATTEMPTS}.
-  -v <version>  : Specify the package version to check. No default value.
+  -v <version>  : Specify the package version to check. Required.
   -h            : Display this help message.
 
 Example:
-  $(basename "$0") -p "${DEFAULT_PACKAGE_NAME}" -v "1.2.3" -a 5
+  $(basename "$0") -p "${DEFAULT_PACKAGE_NAME}" -a 5 -v "1.2.3"
 EOF
 }
 
-# Displays an error message, outputs usage and terminates the script with an error.
-function error() {
-  local error_message="$1"
+#######################################
+# Displays an error message, outputs usage, and terminates the script with an error.
+# Arguments:
+#   1: The error message to display.
+#   2: The error exit code (optional).
+#######################################
+function __error() {
+  local -r message="$1"
+  local -ir code=${2:-1} # Default error code is 1
 
-  printf 'Error: %s.\n' "$error_message" >&2
   usage
-  exit 1
+  printf '\nError: %s.\n' "$message" >&2
+
+  exit $code
 }
 
-# Function to handle script interruption (Ctrl+C).
-function interrupt() {
-  error 'Script interrupted by user'
-}
-
-# Register the interrupt handler for SIGINT.
-trap interrupt SIGINT
-
-# Parse command line options.
+#######################################
+# Parses command line options.
+# Arguments:
+#   References to package, version, and max_attempts variables.
+#######################################
 function __parse_options() {
   local -n _package="$1"
   local -n _version="$2"
-  local -n _max_attempts="$3"
+  local -n _max_attempts=$3
   local opt
 
   shift 3
 
   while getopts ':p:v:a:h' opt; do
     case $opt in
-      p)
-        if [[ -z $OPTARG || $OPTARG =~ ^- ]]; then
-          error 'Option -p requires a package name'
-        fi
-        _package="$OPTARG"
-        ;;
-      v)
-        if [[ -z $OPTARG || $OPTARG =~ ^- ]]; then
-          error 'Option -v requires a version'
-        fi
-        _version="$OPTARG"
-        ;;
-      a)
-        if [[ -z $OPTARG || $OPTARG =~ ^- ]]; then
-          error 'Option -a requires a number'
-        fi
-        _max_attempts="$OPTARG"
-        ;;
-      h)
-        usage
-        exit 0
-        ;;
-      \?)
-        error "Invalid option: -${OPTARG}"
-        ;;
-      :)
-        error "Option -$OPTARG requires an argument"
-        ;;
+    p)
+      _package="$OPTARG"
+      ;;
+    v)
+      _version="$OPTARG"
+      ;;
+    a)
+      _max_attempts=$OPTARG
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    \?)
+      __error "Invalid option: -${OPTARG}" $ERR_INVALID_OPTION
+      ;;
+    :)
+      __error "Option -$OPTARG requires an argument" $ERR_MISSING_ARGUMENT
+      ;;
     esac
   done
+
+  if [[ -z $_version || $_version =~ ^[[:space:]]+$ ]]; then
+    __error "Version (-v) is required" $ERR_INVALID_VERSION
+  fi
 }
 
+#######################################
 # Check if the specified NuGet package version is indexed on nuget.org.
+# Arguments:
+#   1: The NuGet package name.
+#   2: The package version.
+#   3: Maximum number of attempts to check the package availability.
+#######################################
 function _check_package_indexing() {
-  local package="$1"
-  local version="$2"
-  local max_attempts="$3"
-  local attempt_counter=0
-  local is_success=false
+  local -r package="$1"
+  local -r version="$2"
+  local -ir max_attempts=$3
+  local -i attempt=1
+  local -r nuget_package_url="https://www.nuget.org/api/v2/package/${package}/${version}"
+  local -i status_code
 
-  while [[ $attempt_counter -lt $max_attempts ]]; do
-    local nuget_package_url="https://www.nuget.org/api/v2/package/${package}/${version}"
+  while [[ $attempt -le $max_attempts ]]; do
+    printf "Checking if %s version %s is indexed on nuget.org (Attempt: %d)...\n" "$package" "$version" $attempt
 
-    local http_status=$(curl --silent --output /dev/null --write-out '%{http_code}' --location "$nuget_package_url")
+    status_code=$(curl --silent -L --output /dev/null --write-out '%{http_code}' "$nuget_package_url")
 
-    if [[ $http_status -eq 302 || $http_status -eq 200 ]]; then
-      is_success=true
-      break
+    if [[ $status_code -eq 200 ]]; then
+      printf "Package %s version %s is indexed on nuget.org.\n" "$package" "$version"
+      exit 0
     else
-      >&2 echo "Pending. Package $package version $version is not available for download yet. HTTP status: ${http_status}."
-      ((attempt_counter++))
+      printf "Pending. Package %s version %s is not indexed yet. Status code: %d\n" "$package" "$version" "$status_code"
 
-      if [[ $max_attempts -gt 1 ]]; then
-        >&2 echo "Attempt $attempt_counter of $max_attempts. Retrying in $SLEEP_SECONDS seconds..."
+      if [[ $attempt -lt $max_attempts ]]; then
+        printf "Sleeping for %d seconds before the next attempt %d of %d...\n" "$SLEEP_SECONDS" $attempt $max_attempts >&2
         sleep $SLEEP_SECONDS
       fi
     fi
+
+    ((attempt++))
   done
 
-  if [[ $is_success == false ]]; then
-    >&2 echo "Package $package version $version was not available for download after $max_attempts attempts."
-  fi
-
-  # Return
-  echo "$is_success"
+  __error "Package $package version $version was not indexed after $max_attempts attempts" $ERR_PACKAGE_NOT_FOUND
 }
 
+#######################################
 # Main function to orchestrate script execution.
+# Uses global defaults and user inputs to check NuGet package versions.
+#######################################
 function main() {
   local package="$DEFAULT_PACKAGE_NAME"
   local version=''
-  local max_attempts="$DEFAULT_MAX_ATTEMPTS"
+  local -i max_attempts=$DEFAULT_MAX_ATTEMPTS
 
   __parse_options package version max_attempts "$@"
   _check_package_indexing "$package" "$version" "$max_attempts"
 }
 
+# Execute the main function with all passed arguments
 main "$@"

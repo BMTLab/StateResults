@@ -4,7 +4,7 @@
 # Version: 1.1.0
 
 # Description: This script updates the version of a specified NuGet package in Directory.Packages.props or .csproj file.
-# Used in CI/CD to automatically install a version of package dependencies by a new version of the package.
+# Used in CI/CD to automatically upgrade package dependency to a new unified version of the packages.
 
 # Usage:
 # chmod +x rewrite-pkg-version.sh
@@ -54,7 +54,7 @@ function __error() {
   local -r message="$1"
   local -ir code=${2:-1} # Default error code is 1
 
-  printf 'Error: %s.\n' "$message" >&2
+  printf '\nError: %s.\n' "$message" >&2
   usage
   exit $code
 }
@@ -149,4 +149,5 @@ function main() {
   _update_version "$file" "$package" "$version"
 }
 
+# Execute the main function with all passed arguments
 main "$@"
