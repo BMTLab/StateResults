@@ -188,7 +188,7 @@ public sealed class Results2Tests
         (
             async _ =>
             {
-                await Task.Yield();; // Simulate async work
+                await Task.Yield(); // Simulate async work
                 successFuncInvoked = true;
             },
             async _ =>

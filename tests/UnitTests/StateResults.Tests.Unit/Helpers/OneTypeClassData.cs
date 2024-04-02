@@ -1,7 +1,9 @@
 using System.Collections;
 
+#pragma warning disable CA1812 // Class is never instantiated.
 namespace BMTLab.StateResults.Tests.Units;
 
+[UsedImplicitly]
 internal sealed class OneTypeClassData : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
@@ -20,6 +22,7 @@ internal sealed class OneTypeClassData : IEnumerable<object[]>
 }
 
 
+[UsedImplicitly]
 internal sealed class TwoTypesClassData : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()

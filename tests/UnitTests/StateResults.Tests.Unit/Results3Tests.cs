@@ -1,11 +1,12 @@
 using BMTLab.OneOf.Reduced;
 
+#pragma warning disable CS9113 // Parameter is unread.
 namespace BMTLab.StateResults.Tests.Units;
 
 // ReSharper disable All
-file class TE0(string? message = default);
+file sealed class TE0(string? message = default);
 
-file class TE1(string? message = default);
+file sealed class TE1(string? message = default);
 // ReSharper restore All
 
 
