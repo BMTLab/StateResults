@@ -8,9 +8,7 @@
         <IsTestProject>true</IsTestProject>
         <IsPublishable>false</IsPublishable>
         <IsPackable>false</IsPackable>
-
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
-
         <NoWarn>$(NoWarn);CA1707</NoWarn><!--Remove underscore in method name-->
         <NoWarn>$(NoWarn);CA2007</NoWarn><!--Consider calling ConfigureAwait on the awaited task-->
     </PropertyGroup>
@@ -34,7 +32,7 @@
         <PackageReference Include="FluentAssertions"/>
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Label="GlobalUsings">
         <Using Include="NSubstitute"/>
         <Using Include="FluentAssertions"/>
         <Using Include="Xunit"/>
