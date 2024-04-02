@@ -47,27 +47,23 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>$(Company).$(Name).$(AssemblyName)</RootNamespace>
-
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
         <AnalysisLevel>preview</AnalysisLevel>
-
         <Platforms>AnyCPU</Platforms>
-
         <NoWarn>$(NoWarn);S2094</NoWarn><!--Remove empty record-->
         <NoWarn>$(NoWarn);CA1040</NoWarn><!--Avoid empty interfaces-->
         <NoWarn>$(NoWarn);CA1308</NoWarn><!--Normalize strings to uppercase-->
         <NoWarn>$(NoWarn);CA1034</NoWarn><!--Nested types should not be visible-->
         <NoWarn>$(NoWarn);S3604</NoWarn><!--Remove the member initializer, all constructors set an initial value for the member-->
         <NoWarn>$(NoWarn);NETSDK1057</NoWarn><!--You are using a preview version-->
-
         <Configurations>Debug;Release</Configurations>
         <PackageReleaseNotes Condition="'$(Configuration)'=='Debug'">Debug</PackageReleaseNotes>
         <PackageReleaseNotes Condition="'$(Configuration)'=='Release'">Release</PackageReleaseNotes>
     </PropertyGroup>
 
-    <PropertyGroup>
+    <PropertyGroup Label="ArtifactDirectory">
         <ArtifactsPath>$(MSBuildThisFileDirectory)out</ArtifactsPath>
         <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
     </PropertyGroup>
@@ -92,7 +88,7 @@
         <PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="All"/>
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Label="GlobalUsings">
         <Using Include="JetBrains.Annotations"/>
         <Using Include="System.Diagnostics"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
@@ -103,7 +99,7 @@
         <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath=""/>
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Label="SourceLink">
         <SourceRoot Include="$(MSBuildThisFileDirectory)/"/>
         <PackageReference Include="Microsoft.SourceLink.GitHub">
             <PrivateAssets>all</PrivateAssets>
