@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Author: Nikita Neverov (BMTLab)
-# Version: 2.0.1
+# Version: 2.0.2
 
 # Description: Checks if a NuGet package is indexed and available on nuget.org.
 # Used in CI/CD to automatically check if a dependency package is indexed before pushing a dependent package.
@@ -129,7 +129,7 @@ function _check_package_indexing() {
       printf "Pending. Package %s version %s is not indexed yet. Status code: %d\n" "$package" "$version" "$status_code"
 
       if [[ $attempt -lt $max_attempts ]]; then
-        printf "Sleeping for %d seconds before the next attempt %d of %d...\n" "$SLEEP_SECONDS" $attempt $max_attempts >&2
+        printf "Sleeping for %d seconds before the next attempt %d of %d...\n" $SLEEP_SECONDS $attempt $max_attempts >&2
         sleep $SLEEP_SECONDS
       fi
     fi
