@@ -16,8 +16,8 @@ namespace BMTLab.OneOf.Reduced;
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
 public class OneOf<T0, T1> : IOneOf, IEquatable<OneOf<T0, T1>>
-    where T0: notnull
-    where T1: notnull
+    where T0 : notnull
+    where T1 : notnull
 {
     private readonly T0? _value0;
     private readonly T1? _value1;
@@ -285,9 +285,9 @@ public class OneOf<T0, T1> : IOneOf, IEquatable<OneOf<T0, T1>>
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
 public class OneOf<T0, T1, T2> : IOneOf, IEquatable<OneOf<T0, T1, T2>>
-    where T0: notnull
-    where T1: notnull
-    where T2: notnull
+    where T0 : notnull
+    where T1 : notnull
+    where T2 : notnull
 {
     private readonly T0? _value0;
     private readonly T1? _value1;
@@ -604,10 +604,10 @@ public class OneOf<T0, T1, T2> : IOneOf, IEquatable<OneOf<T0, T1, T2>>
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
 public class OneOf<T0, T1, T2, T3> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3>>
-    where T0: notnull
-    where T1: notnull
-    where T2: notnull
-    where T3: notnull
+    where T0 : notnull
+    where T1 : notnull
+    where T2 : notnull
+    where T3 : notnull
 {
     private readonly T0? _value0;
     private readonly T1? _value1;
@@ -973,11 +973,11 @@ public class OneOf<T0, T1, T2, T3> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3>>
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
 public class OneOf<T0, T1, T2, T3, T4> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3, T4>>
-    where T0: notnull
-    where T1: notnull
-    where T2: notnull
-    where T3: notnull
-    where T4: notnull
+    where T0 : notnull
+    where T1 : notnull
+    where T2 : notnull
+    where T3 : notnull
+    where T4 : notnull
 {
     private readonly T0? _value0;
     private readonly T1? _value1;
@@ -1392,12 +1392,12 @@ public class OneOf<T0, T1, T2, T3, T4> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3
 [DebuggerStepThrough]
 [ExcludeFromCodeCoverage]
 public class OneOf<T0, T1, T2, T3, T4, T5> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3, T4, T5>>
-    where T0: notnull
-    where T1: notnull
-    where T2: notnull
-    where T3: notnull
-    where T4: notnull
-    where T5: notnull
+    where T0 : notnull
+    where T1 : notnull
+    where T2 : notnull
+    where T3 : notnull
+    where T4 : notnull
+    where T5 : notnull
 {
     private readonly T0? _value0;
     private readonly T1? _value1;

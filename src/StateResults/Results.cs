@@ -12,8 +12,8 @@ namespace BMTLab.StateResults;
 [PublicAPI]
 [DebuggerStepThrough]
 public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrErrorResult
-    where TSuccess: notnull
-    where TError: notnull
+    where TSuccess : notnull
+    where TError : notnull
 {
     /// <summary>
     ///     Initializes the result object with a successful state.
@@ -44,14 +44,20 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
 
 
     /// <summary>
-    ///     Trying to get the successful <typeparamref name="TSuccess"/> value.
+    ///     Trying to get the successful <typeparamref name="TSuccess" /> value.
     /// </summary>
     public TSuccess? Success { get; }
 
     /// <summary>
-    ///     Trying to get the error <typeparamref name="TError"/> value.
+    ///     Trying to get the error <typeparamref name="TError" /> value.
     /// </summary>
     public TError? Error { get; }
+
+    /// <inheritdoc />
+    public bool IsError => !IsSuccess;
+
+    /// <inheritdoc />
+    public bool IsSuccess => Index == 0;
 
     /// <inheritdoc />
     public object Value => Index switch
@@ -72,37 +78,16 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
     /// <inheritdoc />
     public int Index { get; } = 0;
 
-    /// <inheritdoc />
-    public bool IsError => !IsSuccess;
 
-    /// <inheritdoc />
-    public bool IsSuccess => Index == 0;
-
-
-    #region Operators
-    /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TError>(in TSuccess value) =>
-        new(GetValueOrThrowInvalidCastExceptionIfNull(value));
-
-    /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
-    public static implicit operator Results<TSuccess, TError>(in TError value) =>
-        new(GetValueOrThrowInvalidCastExceptionIfNull(value));
-
-
-    /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TSuccess(in Results<TSuccess, TError> value) =>
-        value is { Index: 0, Success: not null } ? value.Success : ThrowInvalidCastException<TSuccess>();
-
-    /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
-    public static explicit operator TError(in Results<TSuccess, TError> value) =>
-        value is { Index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<TError>();
-
-
-    public static bool operator true(in Results<TSuccess, TError> result) => result.IsSuccess;
-
-    [ExcludeFromCodeCoverage]
-    public static bool operator false(in Results<TSuccess, TError> result) => result.IsError;
-    #endregion _Operators
+    /// <summary>
+    ///     Returns the hash code for this instance based on current state of the union.
+    /// </summary>
+    /// <returns>
+    ///     A 32-bit signed integer that is the hash code for this instance.
+    /// </returns>
+    [Pure]
+    public override int GetHashCode() =>
+        HashCode.Combine(Index, Value);
 
 
     /// <summary>
@@ -234,14 +219,28 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
         };
 
 
+    #region Operators
+    /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
+    public static implicit operator Results<TSuccess, TError>(in TSuccess value) =>
+        new(GetValueOrThrowInvalidCastExceptionIfNull(value));
 
-    /// <summary>
-    ///     Returns the hash code for this instance based on current state of the union.
-    /// </summary>
-    /// <returns>
-    ///     A 32-bit signed integer that is the hash code for this instance.
-    /// </returns>
-    [Pure]
-    public override int GetHashCode() =>
-        HashCode.Combine(Index, Value);
+    /// <exception cref="InvalidCastException">if <paramref name="value" /> is <c>null</c>.</exception>
+    public static implicit operator Results<TSuccess, TError>(in TError value) =>
+        new(GetValueOrThrowInvalidCastExceptionIfNull(value));
+
+
+    /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
+    public static explicit operator TSuccess(in Results<TSuccess, TError> value) =>
+        value is { Index: 0, Success: not null } ? value.Success : ThrowInvalidCastException<TSuccess>();
+
+    /// <exception cref="InvalidCastException"><paramref name="value" /> is not stored here right now.</exception>
+    public static explicit operator TError(in Results<TSuccess, TError> value) =>
+        value is { Index: 1, Error: not null } ? value.Error : ThrowInvalidCastException<TError>();
+
+
+    public static bool operator true(in Results<TSuccess, TError> result) => result.IsSuccess;
+
+    [ExcludeFromCodeCoverage]
+    public static bool operator false(in Results<TSuccess, TError> result) => result.IsError;
+    #endregion _Operators
 }

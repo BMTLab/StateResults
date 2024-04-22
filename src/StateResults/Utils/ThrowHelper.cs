@@ -17,30 +17,6 @@ internal static class ThrowHelper
         ArgumentNullException.ThrowIfNull(argument, paramName);
 
 
-    internal static void ThrowIfNullOrWhiteSpace
-    (
-        in string? argument,
-        [CallerArgumentExpression("argument")] string? paramName = null
-    )
-    {
-        #if NET8_0_OR_GREATER
-        ArgumentException.ThrowIfNullOrWhiteSpace(argument, paramName);
-        #else
-
-        if (argument is null)
-            throw new ArgumentNullException(paramName, "Value cannot be null.");
-
-        if (string.IsNullOrWhiteSpace(argument))
-            throw new ArgumentException
-            (
-                "The value cannot be an empty string or composed entirely of whitespace.",
-                paramName
-            );
-
-        #endif
-    }
-
-
     [DoesNotReturn]
     internal static T ThrowInvalidCastException<T>() =>
         throw new InvalidCastException($"This union does not currently store the given type: {typeof(T)}.");

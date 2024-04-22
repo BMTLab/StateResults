@@ -41,12 +41,12 @@ namespace BMTLab.StateResults;
 [PublicAPI]
 [DebuggerStepThrough]
 public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf, IHasSuccessOrErrorResult
-    where TSuccess: notnull
+    where TSuccess : notnull
 <#
                 foreach (var specificErrorType in errorTypesArray)
                 {
 #>
-    where <#= specificErrorType #>: notnull
+    where <#= specificErrorType #> : notnull
 <#
                 }
 #>
@@ -84,7 +84,7 @@ public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf,
 
 
     /// <summary>
-    ///     Trying to get the successful <typeparamref name="TSuccess"/> value.
+    ///     Trying to get the successful <typeparamref name="TSuccess" /> value.
     /// </summary>
     public TSuccess? Success { get; }
 

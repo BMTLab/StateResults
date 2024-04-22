@@ -41,7 +41,7 @@ public class OneOf<<#= typesText #>> : IOneOf, IEquatable<OneOf<<#= typesText #>
         foreach (var specificType in typesArray)
         {
 #>
-    where <#= specificType #>: notnull
+    where <#= specificType #> : notnull
 <#
         }
 #>
