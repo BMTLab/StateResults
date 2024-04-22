@@ -28,6 +28,6 @@ public interface IOneOf
     ///     A 32-bit signed integer that is the hash code for this instance.
     /// </returns>
     [Pure]
-    public int GetHashCode() =>
+    int GetHashCode() =>
         HashCode.Combine(Index, Value);
 }
