@@ -71,6 +71,15 @@ public class OneOf<T0, T1> : IOneOf, IEquatable<OneOf<T0, T1>>
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
 
+    /// <inheritdoc />
+    public Type Type =>
+        Index switch
+        {
+            0     => typeof(T0),
+            1     => typeof(T1),
+            var _ => throw new InvalidOperationException(CorruptedMessage)
+        };
+
 
     /// <inheritdoc />
     public int Index { get; }
@@ -346,6 +355,16 @@ public class OneOf<T0, T1, T2> : IOneOf, IEquatable<OneOf<T0, T1, T2>>
             1 when _value1 is not null => _value1,
             2 when _value2 is not null => _value2,
             var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+
+    /// <inheritdoc />
+    public Type Type =>
+        Index switch
+        {
+            0     => typeof(T0),
+            1     => typeof(T1),
+            2     => typeof(T2),
+            var _ => throw new InvalidOperationException(CorruptedMessage)
         };
 
 
@@ -672,6 +691,17 @@ public class OneOf<T0, T1, T2, T3> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3>>
             2 when _value2 is not null => _value2,
             3 when _value3 is not null => _value3,
             var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+
+    /// <inheritdoc />
+    public Type Type =>
+        Index switch
+        {
+            0     => typeof(T0),
+            1     => typeof(T1),
+            2     => typeof(T2),
+            3     => typeof(T3),
+            var _ => throw new InvalidOperationException(CorruptedMessage)
         };
 
 
@@ -1047,6 +1077,18 @@ public class OneOf<T0, T1, T2, T3, T4> : IOneOf, IEquatable<OneOf<T0, T1, T2, T3
             3 when _value3 is not null => _value3,
             4 when _value4 is not null => _value4,
             var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+
+    /// <inheritdoc />
+    public Type Type =>
+        Index switch
+        {
+            0     => typeof(T0),
+            1     => typeof(T1),
+            2     => typeof(T2),
+            3     => typeof(T3),
+            4     => typeof(T4),
+            var _ => throw new InvalidOperationException(CorruptedMessage)
         };
 
 
@@ -1471,6 +1513,19 @@ public class OneOf<T0, T1, T2, T3, T4, T5> : IOneOf, IEquatable<OneOf<T0, T1, T2
             4 when _value4 is not null => _value4,
             5 when _value5 is not null => _value5,
             var _                      => throw new InvalidOperationException(CorruptedMessage)
+        };
+
+    /// <inheritdoc />
+    public Type Type =>
+        Index switch
+        {
+            0     => typeof(T0),
+            1     => typeof(T1),
+            2     => typeof(T2),
+            3     => typeof(T3),
+            4     => typeof(T4),
+            5     => typeof(T5),
+            var _ => throw new InvalidOperationException(CorruptedMessage)
         };
 
 

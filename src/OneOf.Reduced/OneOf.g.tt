@@ -118,6 +118,21 @@ public class OneOf<<#= typesText #>> : IOneOf, IEquatable<OneOf<<#= typesText #>
             var _                      => throw new InvalidOperationException(CorruptedMessage)
         };
 
+    /// <inheritdoc />
+    public Type Type =>
+        Index switch
+        {
+<#
+        for (var typeIndex = 0; typeIndex < typesArray.Length; typeIndex++)
+        {
+#>
+            <#= typeIndex #>     => typeof(<#= typesArray[typeIndex] #>),
+<#
+        }
+#>
+            var _ => throw new InvalidOperationException(CorruptedMessage)
+        };
+
 
     /// <inheritdoc />
     public int Index { get; }

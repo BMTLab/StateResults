@@ -62,6 +62,14 @@ public readonly record struct Results<TSuccess, TError> : IOneOf, IHasSuccessOrE
     };
 
     /// <inheritdoc />
+    public Type Type => Index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => typeof(TError),
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
     public int Index { get; } = 0;
 
     /// <inheritdoc />

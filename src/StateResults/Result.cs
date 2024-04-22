@@ -53,8 +53,13 @@ public readonly record struct Result<T> : IOneOf, IHasSuccessOrErrorResult
 
 
     /// <inheritdoc />
+    public Type Type => typeof(T);
+
+
+    /// <inheritdoc />
     /// <value>0</value>
     [EditorBrowsable(EditorBrowsableState.Never)]
+    [Browsable(false)]
     public int Index => 0;
 
 

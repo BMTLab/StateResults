@@ -75,6 +75,14 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
     };
 
     /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
     public int Index => _index switch
     {
         0 when Success is not null => 0,
@@ -364,6 +372,14 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error.Value,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
@@ -671,6 +687,14 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error.Value,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
@@ -992,6 +1016,14 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error.Value,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
@@ -1327,6 +1359,14 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error.Value,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 

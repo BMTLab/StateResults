@@ -7,7 +7,7 @@ namespace BMTLab.OneOf.Reduced;
 public interface IOneOf
 {
     /// <summary>
-    ///     A value of the type union.
+    ///     Returns the actual value that this type union was initialized with.
     /// </summary>
     /// <remarks>
     ///     The union can hold a value of any type defined within the set of possible types.
@@ -20,6 +20,26 @@ public interface IOneOf
     /// </summary>
     /// <example>0</example>
     int Index { get; }
+
+    /// <summary>
+    ///     Returns the type that this type union was initialized with.
+    /// </summary>
+    /// <remarks>
+    ///     The property will return one of the types that was declared in the union signature rather than the actual value type that is stored there. for example:
+    ///     <code>
+    ///     <![CDATA[
+    ///     OneOf<int, Exeption> union = new OverflowExeption();
+    ///     union.Type // >> System.Exception
+    ///     ]]>
+    ///     </code>
+    ///     Use <c>Value.GetType()</c> to get the runtime type.
+    /// </remarks>
+    /// <value>The type of the type union.</value>
+    /*
+     * The property returns a static type, as in the union declaration, which gives a new and only way to get this information,
+     * unlike the runtime type that could be obtained from Value.
+     */
+    Type Type { get; }
 
     /// <summary>
     ///     Returns the hash code for this instance based on current state of the union.
