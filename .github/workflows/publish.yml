@@ -3,7 +3,7 @@ name: publish
 env:
   NUGET_URL: https://api.nuget.org/v3/index.json
   INDEXING_TIMEOUT: 300 # seconds
-  DOTNET_SDK_VERSION: 8.0.201
+  DOTNET_SDK_VERSION: 8.0.204
   DOTNET_NOLOGO: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   ONEOF_REDUCED_PROJECT_PATH: ./src/OneOf.Reduced/OneOf.Reduced.csproj
