@@ -59,8 +59,13 @@
         <NoWarn>$(NoWarn);S3604</NoWarn><!--Remove the member initializer, all constructors set an initial value for the member-->
         <NoWarn>$(NoWarn);NETSDK1057</NoWarn><!--You are using a preview version-->
         <Configurations>Debug;Release</Configurations>
-        <PackageReleaseNotes Condition="'$(Configuration)'=='Debug'">Debug</PackageReleaseNotes>
-        <PackageReleaseNotes Condition="'$(Configuration)'=='Release'">Release</PackageReleaseNotes>
+        <PackageReleaseNotes>
+            v4.1
+            - Added Type property for all IOneOf implementations, providing a static type of storing value.
+            - Optimizing the performance of generating state marker types.
+            - The None state marker type is now generated automatically if it was not specified by the user.
+            - Small improvements.
+        </PackageReleaseNotes>
     </PropertyGroup>
 
     <PropertyGroup Label="ArtifactDirectory">
