@@ -30,12 +30,12 @@ jobs:
         run: |
           dotnet --info
           dotnet restore
-          dotnet build -c Release
+          dotnet build -c Debug
 
       - name: Test
         id: test
         run: |
-          dotnet test --no-restore --no-build -c Release --verbosity normal
+          dotnet test --no-restore --no-build -c Debug --verbosity normal
 
       # Also, setting the PRERELEASE flag depending on the contents of the version file.
       - name: Read Version
