@@ -18,6 +18,15 @@ public sealed class StateMarkersGeneratorAttribute : Attribute
     ///     The .csv file should be labeled as AdditionalFile.
     /// </remarks>
     /// <param name="fileName">The name of the source .csv file to generate the state markers class.</param>
+    /// <example>
+    ///     <code>
+    ///         [StateMarkersGenerator("StateMarkers.csv")]
+    ///         public static partial class CustomStates
+    ///         {
+    ///             public readonly record struct OtherState;
+    ///         }
+    ///     </code>
+    /// </example>
     [SuppressMessage("Design", "CA1019:Define accessors for attribute arguments")]
     public StateMarkersGeneratorAttribute(string fileName)
     {

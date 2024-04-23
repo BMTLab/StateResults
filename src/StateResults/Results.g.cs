@@ -20,9 +20,9 @@ namespace BMTLab.StateResults;
 [PublicAPI]
 [DebuggerStepThrough]
 public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessOrErrorResult
-    where TSuccess: notnull
-    where TE0: notnull
-    where TE1: notnull
+    where TSuccess : notnull
+    where TE0 : notnull
+    where TE1 : notnull
 {
     // Store an index to track the state of this object
     private readonly int _index = 0;
@@ -57,7 +57,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
 
 
     /// <summary>
-    ///     Trying to get the successful <typeparamref name="TSuccess"/> value.
+    ///     Trying to get the successful <typeparamref name="TSuccess" /> value.
     /// </summary>
     public TSuccess? Success { get; }
 
@@ -71,6 +71,14 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error.Value,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
@@ -297,7 +305,7 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -312,10 +320,10 @@ public readonly record struct Results<TSuccess, TE0, TE1> : IOneOf, IHasSuccessO
 [PublicAPI]
 [DebuggerStepThrough]
 public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuccessOrErrorResult
-    where TSuccess: notnull
-    where TE0: notnull
-    where TE1: notnull
-    where TE2: notnull
+    where TSuccess : notnull
+    where TE0 : notnull
+    where TE1 : notnull
+    where TE2 : notnull
 {
     // Store an index to track the state of this object
     private readonly int _index = 0;
@@ -350,7 +358,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
 
 
     /// <summary>
-    ///     Trying to get the successful <typeparamref name="TSuccess"/> value.
+    ///     Trying to get the successful <typeparamref name="TSuccess" /> value.
     /// </summary>
     public TSuccess? Success { get; }
 
@@ -364,6 +372,14 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error.Value,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
@@ -602,7 +618,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -618,11 +634,11 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2> : IOneOf, IHasSuc
 [PublicAPI]
 [DebuggerStepThrough]
 public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IHasSuccessOrErrorResult
-    where TSuccess: notnull
-    where TE0: notnull
-    where TE1: notnull
-    where TE2: notnull
-    where TE3: notnull
+    where TSuccess : notnull
+    where TE0 : notnull
+    where TE1 : notnull
+    where TE2 : notnull
+    where TE3 : notnull
 {
     // Store an index to track the state of this object
     private readonly int _index = 0;
@@ -657,7 +673,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
 
 
     /// <summary>
-    ///     Trying to get the successful <typeparamref name="TSuccess"/> value.
+    ///     Trying to get the successful <typeparamref name="TSuccess" /> value.
     /// </summary>
     public TSuccess? Success { get; }
 
@@ -671,6 +687,14 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error.Value,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
@@ -921,7 +945,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -938,12 +962,12 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3> : IOneOf, IH
 [PublicAPI]
 [DebuggerStepThrough]
 public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneOf, IHasSuccessOrErrorResult
-    where TSuccess: notnull
-    where TE0: notnull
-    where TE1: notnull
-    where TE2: notnull
-    where TE3: notnull
-    where TE4: notnull
+    where TSuccess : notnull
+    where TE0 : notnull
+    where TE1 : notnull
+    where TE2 : notnull
+    where TE3 : notnull
+    where TE4 : notnull
 {
     // Store an index to track the state of this object
     private readonly int _index = 0;
@@ -978,7 +1002,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
 
 
     /// <summary>
-    ///     Trying to get the successful <typeparamref name="TSuccess"/> value.
+    ///     Trying to get the successful <typeparamref name="TSuccess" /> value.
     /// </summary>
     public TSuccess? Success { get; }
 
@@ -992,6 +1016,14 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error.Value,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
@@ -1254,7 +1286,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 
@@ -1272,13 +1304,13 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4> : IOneO
 [PublicAPI]
 [DebuggerStepThrough]
 public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : IOneOf, IHasSuccessOrErrorResult
-    where TSuccess: notnull
-    where TE0: notnull
-    where TE1: notnull
-    where TE2: notnull
-    where TE3: notnull
-    where TE4: notnull
-    where TE5: notnull
+    where TSuccess : notnull
+    where TE0 : notnull
+    where TE1 : notnull
+    where TE2 : notnull
+    where TE3 : notnull
+    where TE4 : notnull
+    where TE5 : notnull
 {
     // Store an index to track the state of this object
     private readonly int _index = 0;
@@ -1313,7 +1345,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
 
 
     /// <summary>
-    ///     Trying to get the successful <typeparamref name="TSuccess"/> value.
+    ///     Trying to get the successful <typeparamref name="TSuccess" /> value.
     /// </summary>
     public TSuccess? Success { get; }
 
@@ -1327,6 +1359,14 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error.Value,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
@@ -1601,7 +1641,7 @@ public readonly record struct Results<TSuccess, TE0, TE1, TE2, TE3, TE4, TE5> : 
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 

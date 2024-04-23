@@ -188,7 +188,7 @@ public sealed class Results2Tests
         (
             async _ =>
             {
-                await Task.Yield();; // Simulate async work
+                await Task.Yield(); // Simulate async work
                 successFuncInvoked = true;
             },
             async _ =>
@@ -369,7 +369,7 @@ public sealed class Results2Tests
 
 
     [Fact]
-    public void GetHashCode_ShouldReturnDifferentValuesForDifferentResults()
+    public void GetHashCode_ShouldReturnDifferentHashCodes_WhenDifferentValues()
     {
         //// Arrange
         var result1 = new Results<int, string>(42);
@@ -381,6 +381,22 @@ public sealed class Results2Tests
 
         //// Assert
         hashCode1.Should().NotBe(hashCode2, "different results should produce different hash codes");
+    }
+
+
+    [Fact]
+    public void GetHashCode_ShouldReturnSameHasCode_WhenSameValues()
+    {
+        //// Arrange
+        var result1 = new Results<int, string>("value1");
+        var result2 = new Results<int, string>("value1");
+
+        //// Act
+        var hashCode1 = result1.GetHashCode();
+        var hashCode2 = result2.GetHashCode();
+
+        //// Assert
+        hashCode1.Should().Be(hashCode2, "same Results should have same hash codes");
     }
 
 

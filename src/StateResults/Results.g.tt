@@ -41,12 +41,12 @@ namespace BMTLab.StateResults;
 [PublicAPI]
 [DebuggerStepThrough]
 public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf, IHasSuccessOrErrorResult
-    where TSuccess: notnull
+    where TSuccess : notnull
 <#
                 foreach (var specificErrorType in errorTypesArray)
                 {
 #>
-    where <#= specificErrorType #>: notnull
+    where <#= specificErrorType #> : notnull
 <#
                 }
 #>
@@ -84,7 +84,7 @@ public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf,
 
 
     /// <summary>
-    ///     Trying to get the successful <typeparamref name="TSuccess"/> value.
+    ///     Trying to get the successful <typeparamref name="TSuccess" /> value.
     /// </summary>
     public TSuccess? Success { get; }
 
@@ -98,6 +98,14 @@ public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf,
     {
         0 when Success is not null => Success,
         1 when Error is not null   => Error.Value,
+        var _                      => throw new InvalidOperationException(CorruptedMessage)
+    };
+
+    /// <inheritdoc />
+    public Type Type => _index switch
+    {
+        0 when Success is not null => typeof(TSuccess),
+        1 when Error is not null   => Error.Type,
         var _                      => throw new InvalidOperationException(CorruptedMessage)
     };
 
@@ -354,7 +362,7 @@ public readonly record struct Results<TSuccess, <#= errorTypesText #>> : IOneOf,
     /// </returns>
     [Pure]
     public override int GetHashCode() =>
-        HashCode.Combine(_index, Value);
+        HashCode.Combine(Index, Value);
 }
 
 

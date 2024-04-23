@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 
 # Author: Nikita Neverov (BMTLab)
-# Version: 1.0.1
+# Version: 2.0.0
 
 # Do not forget
-# sudo chmod +x ./clean.sh
+# chmod +x ./clean.sh
 
-# Description: This script is designed to clean specified directories and files in a project.
+# Description: This sh POSIX compatible script is designed to clean specified directories and files in a project.
 # It provides a flexible way to remove build artifacts, temporary files, and other not needed directories and files.
 
 #######################################
@@ -16,10 +16,10 @@
 # Outputs:
 #   Writes names of cleaned directories to stdout.
 #######################################
-function clean_directories() {
-  local -r pattern="$1"
+clean_directories() {
+  pattern="$1"
   printf 'Cleaning directories matching pattern: %s.\n' "$pattern"
-  find .. -name "$pattern" -type d -print0 | xargs -r0 rm -r
+  find .. -name "$pattern" -type d -exec rm -r {} +
 }
 
 #######################################
@@ -29,10 +29,10 @@ function clean_directories() {
 # Outputs:
 #   Writes names of cleaned files to stdout.
 #######################################
-function clean_files() {
-  local -r pattern="$1"
+clean_files() {
+  pattern="$1"
   printf 'Cleaning files matching pattern: %s.\n' "$pattern"
-  find .. -name "$pattern" -type f -print0 | xargs -r0 rm
+  find .. -name "$pattern" -type f -exec rm {} +
 }
 
 #######################################
@@ -41,21 +41,19 @@ function clean_files() {
 # Outputs:
 #   Writes progress and results of cleaning operations to stdout.
 #######################################
-function main() {
-  printf 'Starting cleaning process...'
+main() {
+  printf 'Starting cleaning process...\n'
 
-  # List of patterns for directories to clean
-  local -ar dir_patterns_arr=('build*' 'bin' 'obj' 'out')
+  # Clean directories with specific patterns
+  clean_directories 'build*'
+  clean_directories 'bin'
+  clean_directories 'obj'
+  clean_directories 'out'
 
-  # Clean directories
-  for pattern in "${dir_patterns_arr[@]}"; do
-    clean_directories "$pattern"
-  done
-
-  # Clean files
+  # Clean files with specific patterns
   clean_files 'VERSION.g.txt'
 
-  printf 'Cleaning completed!'
+  printf 'Cleaning completed!\n'
 }
 
 # Execute the main function with all passed arguments

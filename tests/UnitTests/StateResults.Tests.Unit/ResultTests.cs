@@ -179,7 +179,7 @@ public sealed class ResultTests
 
 
     [Fact]
-    public void GetHashCode_Should_ReturnDifferentHashCodesForDifferentValues()
+    public void GetHashCode_ShouldReturnDifferentHashCodes_WhenDifferentValues()
     {
         //// Arrange
         var result1 = new Result<string>("value1");
@@ -191,6 +191,21 @@ public sealed class ResultTests
 
         //// Assert
         hashCode1.Should().NotBe(hashCode2, "different Results should have different hash codes");
+    }
+
+    [Fact]
+    public void GetHashCode_ShouldReturnSameHasCode_WhenSameValues()
+    {
+        //// Arrange
+        var result1 = new Result<string>("value1");
+        var result2 = new Result<string>("value1");
+
+        //// Act
+        var hashCode1 = result1.GetHashCode();
+        var hashCode2 = result2.GetHashCode();
+
+        //// Assert
+        hashCode1.Should().Be(hashCode2, "same Results should have same hash codes");
     }
 
 
