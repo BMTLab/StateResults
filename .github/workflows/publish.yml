@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -67,6 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -84,15 +86,14 @@ jobs:
 
       - name: Check NuGet if ${{ env.PACKAGE_NAME }} is already pushed
         id: check_pushed
-        run: |
-          chmod +x ${{ github.workspace }}/scripts/check-nuget-pkg-indexed.sh
-          PUSHED_RESULT=$(${{ github.workspace }}/scripts/check-nuget-pkg-indexed.sh -p "${{ env.PACKAGE_NAME }}" -v ${{ needs.build-and-set-flags.outputs.VERSION }} -a 1)
-          echo "PUSHED=$PUSHED_RESULT" >> $GITHUB_OUTPUT
-        shell: bash
+        uses: BMTLab/nuget-package-check-action@v1
+        with:
+          package: ${{ env.PACKAGE_NAME }}
+          version: ${{ needs.build-and-set-flags.outputs.VERSION }}
         continue-on-error: true
 
       - name: Push NuGet for ${{ env.PACKAGE_NAME }}
-        if: ${{ steps.check_pushed.outputs.PUSHED != 'true' }}
+        if: ${{ steps.check_pushed.outputs.indexed != 'true' }}
         run: dotnet nuget push ./*.nupkg --source ${{ env.NUGET_URL }} --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
     env:
       PACKAGE_NAME: BMTLab.OneOf.Reduced
@@ -132,16 +133,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Waiting for NuGet Package Indexing
-        id: wait_indexing
         run: |
           sleep ${{ env.INDEXING_TIMEOUT }} # seconds
-          chmod +x ${{ github.workspace }}/scripts/check-nuget-pkg-indexed.sh
-          PUSHED_RESULT=$(${{ github.workspace }}/scripts/check-nuget-pkg-indexed.sh -p "BMTLab.OneOf.Reduced" -v ${{ needs.build-and-set-flags.outputs.VERSION }} -a 12)
-          echo "PUSHED=$PUSHED_RESULT" >> $GITHUB_OUTPUT
         shell: bash
+
+      - name: Checking for NuGet Package Indexing
+        id: wait_indexing
+        uses: BMTLab/nuget-package-check-action@v1
+        with:
+          package: 'BMTLab.OneOf.Reduced'
+          version: ${{ needs.build-and-set-flags.outputs.VERSION }}
+          attempts: 12
     outputs:
-      INDEXED: ${{ steps.wait_indexing.outputs.PUSHED }}
+      INDEXED: ${{ steps.wait_indexing.outputs.indexed }}
 
   publish-StateResults:
     needs: [ build-and-set-flags, update-package-version, delay-for-nuget-indexing]
@@ -149,6 +155,7 @@ jobs:
     if: ${{ needs.delay-for-nuget-indexing.outputs.INDEXED == 'true' }}
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -172,15 +179,14 @@ jobs:
 
       - name: Check NuGet if ${{ env.PACKAGE_NAME }} is already pushed
         id: check_pushed
-        run: |
-          chmod +x ${{ github.workspace }}/scripts/check-nuget-pkg-indexed.sh
-          PUSHED_RESULT=$(${{ github.workspace }}/scripts/check-nuget-pkg-indexed.sh -p "${{ env.PACKAGE_NAME }}" -v ${{ needs.build-and-set-flags.outputs.VERSION }} -a 1)
-          echo "PUSHED=$PUSHED_RESULT" >> $GITHUB_OUTPUT
-        shell: bash
+        uses: BMTLab/nuget-package-check-action@v1
+        with:
+          package: ${{ env.PACKAGE_NAME }}
+          version: ${{ needs.build-and-set-flags.outputs.VERSION }}
         continue-on-error: true
 
       - name: Push NuGet for ${{ env.PACKAGE_NAME }}
-        if: ${{ steps.check_pushed.outputs.PUSHED != 'true' }}
+        if: ${{ steps.check_pushed.outputs.indexed != 'true' }}
         run: dotnet nuget push ./*.nupkg --source ${{ env.NUGET_URL }} --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
     env:
       PACKAGE_NAME: BMTLab.StateResults
@@ -191,6 +197,7 @@ jobs:
     if: ${{ needs.delay-for-nuget-indexing.outputs.INDEXED == 'true' }}
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -214,15 +221,14 @@ jobs:
 
       - name: Check NuGet if ${{ env.PACKAGE_NAME }} is already pushed
         id: check_pushed
-        run: |
-          chmod +x ${{ github.workspace }}/scripts/check-nuget-pkg-indexed.sh
-          PUSHED_RESULT=$(${{ github.workspace }}/scripts/check-nuget-pkg-indexed.sh -p "${{ env.PACKAGE_NAME }}" -v ${{ needs.build-and-set-flags.outputs.VERSION }} -a 1)
-          echo "PUSHED=$PUSHED_RESULT" >> $GITHUB_OUTPUT
-        shell: bash
+        uses: BMTLab/nuget-package-check-action@v1
+        with:
+          package: ${{ env.PACKAGE_NAME }}
+          version: ${{ needs.build-and-set-flags.outputs.VERSION }}
         continue-on-error: true
 
       - name: Push NuGet for ${{ env.PACKAGE_NAME }}
-        if: ${{ steps.check_pushed.outputs.PUSHED != 'true' }}
+        if: ${{ steps.check_pushed.outputs.indexed != 'true' }}
         run: dotnet nuget push ./*.nupkg --source ${{ env.NUGET_URL }} --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
     env:
       PACKAGE_NAME: BMTLab.StateResults.Generator

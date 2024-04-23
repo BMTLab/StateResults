@@ -32,7 +32,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{7EB6
 		scripts\clean.sh = scripts\clean.sh
 		scripts\clean.ps1 = scripts\clean.ps1
 		scripts\rewrite-pkg-version.sh = scripts\rewrite-pkg-version.sh
-		scripts\check-nuget-pkg-indexed.sh = scripts\check-nuget-pkg-indexed.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{9A2C20AD-F908-46D6-A34D-6481D7A6791E}"
