@@ -4,7 +4,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="BMTLab.OneOf.Reduced" Version="4.0.0328" />
+    <PackageVersion Include="BMTLab.OneOf.Reduced" Version="4.1.0423" />
     <PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup Label="Annotations">
