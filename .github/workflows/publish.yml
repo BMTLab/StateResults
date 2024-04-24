@@ -86,7 +86,7 @@ jobs:
 
       - name: Check NuGet if ${{ env.PACKAGE_NAME }} is already pushed
         id: check_pushed
-        uses: BMTLab/nuget-package-check-action@v1.1.1
+        uses: BMTLab/nuget-package-check-action@v1.2.0
         with:
           package: ${{ env.PACKAGE_NAME }}
           version: ${{ needs.build-and-set-flags.outputs.VERSION }}
@@ -141,7 +141,7 @@ jobs:
 
       - name: Checking for NuGet Package Indexing
         id: wait_indexing
-        uses: BMTLab/nuget-package-check-action@v1.1.1
+        uses: BMTLab/nuget-package-check-action@v1.2.0
         with:
           package: 'BMTLab.OneOf.Reduced'
           version: ${{ needs.build-and-set-flags.outputs.VERSION }}
@@ -179,7 +179,7 @@ jobs:
 
       - name: Check NuGet if ${{ env.PACKAGE_NAME }} is already pushed
         id: check_pushed
-        uses: BMTLab/nuget-package-check-action@v1.1.1
+        uses: BMTLab/nuget-package-check-action@v1.2.0
         with:
           package: ${{ env.PACKAGE_NAME }}
           version: ${{ needs.build-and-set-flags.outputs.VERSION }}
@@ -221,7 +221,7 @@ jobs:
 
       - name: Check NuGet if ${{ env.PACKAGE_NAME }} is already pushed
         id: check_pushed
-        uses: BMTLab/nuget-package-check-action@v1.1.1
+        uses: BMTLab/nuget-package-check-action@v1.2.0
         with:
           package: ${{ env.PACKAGE_NAME }}
           version: ${{ needs.build-and-set-flags.outputs.VERSION }}
